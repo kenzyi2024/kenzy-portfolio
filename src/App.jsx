@@ -195,12 +195,6 @@ export default function App() {
               className="w-full h-full object-cover"
             />
           </div>
-
-          <div className="mb-4">
-            <div className="w-16 h-16 md:w-20 md:h-20 border border-[#F3E5D0] rounded-[50%] mx-auto flex items-center justify-center mb-6">
-              <span className="font-serif italic text-2xl text-[#F3E5D0]">Ki</span>
-            </div>
-          </div>
           
           <h2 className="font-sans text-[#F3E5D0] text-sm md:text-lg tracking-[0.3em] uppercase mb-4">Welcome to</h2>
           
@@ -401,13 +395,7 @@ export default function App() {
                </div>
             </div>
             
-             <div className="w-32 h-32 border border-[#F3E5D0]/20 rounded-full flex items-center justify-center ml-auto">
-                 <span className="font-serif italic text-4xl">Ki</span>
-             </div>
-          </div>
-        </div>
-
-        {/* --- FOOTER LOGO REPLACEMENT --- */}
+                     {/* --- FOOTER LOGO REPLACEMENT --- */}
              <div className="w-32 h-32 ml-auto rounded-full overflow-hidden border border-[#F3E5D0]/20 bg-[#F3E5D0]">
                  <img 
                    src={logoImg} 
@@ -415,6 +403,9 @@ export default function App() {
                    className="w-full h-full object-cover opacity-80"
                  />
              </div>
+          </div>
+        </div>
+
 
         {/* Contact Footer Area */}
         <div id="contact" className="border-t border-[#F3E5D0]/10 pt-16 flex flex-col items-center text-center">
