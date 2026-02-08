@@ -396,7 +396,7 @@ export default function App() {
             </div>
             
                      {/* --- FOOTER LOGO REPLACEMENT --- */}
-             <div className="w-80 h-80 ml-auto">
+             <div className="w-160 h-160 ml-auto">
                  <img 
                    src={logoImg} 
                    alt="Kenzy Ibrahim Logo" 
