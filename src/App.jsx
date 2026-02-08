@@ -18,6 +18,8 @@ import {
   Ticket
 } from 'lucide-react';
 
+import kenzyImg from './assets/kenzy.jpg';
+
 // --- Styles & Fonts ---
 const Styles = () => (
   <style>{`
@@ -352,7 +354,7 @@ export default function App() {
              <div className="aspect-[3/4] rounded-t-[10rem] rounded-b-[2rem] overflow-hidden bg-[#B8B8AA] relative group">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#2E4035]/80 z-10"></div>
                 <img 
-                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop" 
+                  src={kenzyImg} 
                   alt="Portrait of Kenzy" 
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                 />
