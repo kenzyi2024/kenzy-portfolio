@@ -357,7 +357,6 @@ export default function App() {
             className="relative"
           >
              <div className="aspect-[3/4] rounded-t-[10rem] rounded-b-[2rem] overflow-hidden bg-[#B8B8AA] relative group">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#2E4035]/80 z-10"></div>
                 <img 
                   src={kenzyImg} 
                   alt="Portrait of Kenzy" 
@@ -380,9 +379,9 @@ export default function App() {
             
             <div className="space-y-4 font-sans text-lg font-light text-[#F3E5D0]/80 mb-12">
               <p>Computer Science Student at George Mason University</p>
-              <p>Volleyball enthusiatest</p>
-              <p>Creative Coordinator at MSA</p>
-              <p>Passionate about bridging design and code to create seamless user experiences.</p>
+              <p>Founder and Creative Coordinator of Kenz Co.</p>
+              <p>Volleyball and Cookie Baking enthusiatest</p>
+              <p>Passionate about building tech that bridges design and code to create seamless user experiences.</p>
             </div>
 
             <div className="mb-8">
