@@ -188,7 +188,7 @@ export default function App() {
         >
 
         {/* --- HERO LOGO REPLACEMENT --- */}
-          <div className="w-56 md:w-72 mb-8">
+          <div className="w-56 md:w-72 mb-8 mx-auto">
             <img 
               src={logoImg} 
               alt="Kenzy Ibrahim Logo" 
