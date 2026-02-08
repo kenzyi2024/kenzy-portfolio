@@ -188,11 +188,11 @@ export default function App() {
         >
 
         {/* --- HERO LOGO REPLACEMENT --- */}
-          <div className="w-32 h-32 md:w-40 md:h-40 mb-8 rounded-full overflow-hidden border-2 border-[#F3E5D0]/20 flex items-center justify-center bg-[#F3E5D0]">
+          <div className="w-56 md:w-72 mb-8">
             <img 
               src={logoImg} 
               alt="Kenzy Ibrahim Logo" 
-              className="w-full h-full object-cover"
+              className="w-full h-auto object-contain"
             />
           </div>
           
