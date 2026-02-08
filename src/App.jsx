@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 import kenzyImg from './assets/kenzy.jpg';
+import logoImg from './assets/kenzyLogo.jpg';
 
 // --- Styles & Fonts ---
 const Styles = () => (
@@ -185,6 +186,16 @@ export default function App() {
           transition={{ duration: 1 }}
           className="z-10"
         >
+
+        {/* --- HERO LOGO REPLACEMENT --- */}
+          <div className="w-32 h-32 md:w-40 md:h-40 mb-8 rounded-full overflow-hidden border-2 border-[#F3E5D0]/20 flex items-center justify-center bg-[#F3E5D0]">
+            <img 
+              src={logoImg} 
+              alt="Kenzy Ibrahim Logo" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+
           <div className="mb-4">
             <div className="w-16 h-16 md:w-20 md:h-20 border border-[#F3E5D0] rounded-[50%] mx-auto flex items-center justify-center mb-6">
               <span className="font-serif italic text-2xl text-[#F3E5D0]">Ki</span>
@@ -395,6 +406,15 @@ export default function App() {
              </div>
           </div>
         </div>
+
+        {/* --- FOOTER LOGO REPLACEMENT --- */}
+             <div className="w-32 h-32 ml-auto rounded-full overflow-hidden border border-[#F3E5D0]/20 bg-[#F3E5D0]">
+                 <img 
+                   src={logoImg} 
+                   alt="Kenzy Ibrahim Logo" 
+                   className="w-full h-full object-cover opacity-80"
+                 />
+             </div>
 
         {/* Contact Footer Area */}
         <div id="contact" className="border-t border-[#F3E5D0]/10 pt-16 flex flex-col items-center text-center">
