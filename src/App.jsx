@@ -396,11 +396,11 @@ export default function App() {
             </div>
             
                      {/* --- FOOTER LOGO REPLACEMENT --- */}
-             <div className="w-32 h-32 ml-auto rounded-full overflow-hidden border border-[#F3E5D0]/20 bg-[#F3E5D0]">
+             <div className="w-40 h-40 ml-auto">
                  <img 
                    src={logoImg} 
                    alt="Kenzy Ibrahim Logo" 
-                   className="w-full h-full object-cover opacity-80"
+                   className="w-full h-auto object-contain opacity-80"
                  />
              </div>
           </div>
