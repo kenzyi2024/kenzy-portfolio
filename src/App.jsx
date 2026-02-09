@@ -360,7 +360,7 @@ export default function App() {
                 <img 
                   src={kenzyImg} 
                   alt="Portrait of Kenzy" 
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
              </div>
           </motion.div>
