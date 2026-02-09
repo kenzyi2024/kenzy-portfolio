@@ -414,11 +414,11 @@ export default function App() {
             </h2>
             
             <div className="flex flex-col md:flex-row gap-4 md:gap-8 mb-20">
-              <a href="mailto:kenzy2024@gmail.com" className="px-8 py-4 rounded-full border border-[#C19A6B] text-[#F3E5D0] flex items-center gap-3 hover:bg-[#C19A6B] transition-all">
+              <a href="mailto:kenzyi2024@gmail.com" className="px-8 py-4 rounded-full border border-[#C19A6B] text-[#F3E5D0] flex items-center gap-3 hover:bg-[#C19A6B] transition-all">
                 <Mail size={20} />
-                <span className="font-sans tracking-wide text-sm">kenzy2024@gmail.com</span>
+                <span className="font-sans tracking-wide text-sm">kenzyi2024@gmail.com</span>
               </a>
-              <a href="#" className="px-8 py-4 rounded-full border border-[#C19A6B] text-[#F3E5D0] flex items-center gap-3 hover:bg-[#C19A6B] transition-all">
+              <a href="https://www.linkedin.com/in/kenzyibrahim" className="px-8 py-4 rounded-full border border-[#C19A6B] text-[#F3E5D0] flex items-center gap-3 hover:bg-[#C19A6B] transition-all">
                 <Linkedin size={20} />
                 <span className="font-sans tracking-wide text-sm">/kenzyibrahim</span>
               </a>
