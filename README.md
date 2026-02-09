@@ -19,7 +19,7 @@ Technology should be as refined as it is functional.
 
 ---
 
-### 🛠️ Tech Stack
+### Tech Stack
 Built for scalability and speed using the modern web ecosystem.
 
 | Category | Technology | Description |
@@ -32,7 +32,7 @@ Built for scalability and speed using the modern web ecosystem.
 
 ---
 
-### 🚀 Key Features
+### Key Features
 * **Fully Responsive:** Layouts switch from desktop grids to mobile stacks seamlessly.
 * **Interactive Navigation:** Full-screen modal menu with hollow-text hover effects.
 * **Snap Carousel:** Touch-friendly horizontal project cards with auto-pagination.
@@ -41,7 +41,7 @@ Built for scalability and speed using the modern web ecosystem.
 
 ---
 
-### 📂 Project Structure
+### Project Structure
 ```text
 src/
 ├── assets/      # Media (logo, portrait) 
