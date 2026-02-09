@@ -387,10 +387,8 @@ export default function App() {
             <div className="mb-8">
                <p className="font-sans text-sm tracking-[0.2em] mb-6 text-[#C19A6B] uppercase">Connect with me on...</p>
                <div className="flex gap-6">
-                 <a href="#" className="hover:text-[#C19A6B] transition-colors"><Github size={32} /></a>
-                 <a href="#" className="hover:text-[#C19A6B] transition-colors"><Linkedin size={32} /></a>
-                 <a href="#" className="hover:text-[#C19A6B] transition-colors"><Youtube size={32} /></a>
-                 <a href="#" className="hover:text-[#C19A6B] transition-colors"><Instagram size={32} /></a>
+                 <a href="https://github.com/kenzyi2024" className="hover:text-[#C19A6B] transition-colors"><Github size={32} /></a>
+                 <a href="https://www.linkedin.com/in/kenzyibrahim" className="hover:text-[#C19A6B] transition-colors"><Linkedin size={32} /></a>
                </div>
             </div>
             
