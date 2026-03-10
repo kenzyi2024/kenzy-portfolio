@@ -208,7 +208,7 @@ export default function App() {
           </p>
 
           <motion.a 
-            href="/resume.pdf"
+            href="/Users/kenzyibrahim/kenzy-portfolio/src/assets/resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
