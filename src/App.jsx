@@ -15,7 +15,8 @@ import {
   Palette,
   ChevronLeft,
   ChevronRight,
-  Ticket
+  Ticket,
+  Flame
 } from 'lucide-react';
 
 import kenzyImg from './assets/kenzy.jpg';
@@ -113,6 +114,14 @@ export default function App() {
       tags: ["React", "Full Stack", "Web App"],
       desc: "A secure, student-verified marketplace for buying and selling campus event tickets, eliminating scalping.",
       icon: Ticket
+    }
+    {
+      title: "Wildfire Evac App",
+      role: "Software Project",
+      tags: ["Emergency Tech", "Mapping", "Web App"],
+      desc: "A routing and navigation application designed to help users find safe evacuation paths away from active wildfire zones.",
+      icon: Flame,
+      githubUrl: "https://github.com/kenzyi2024/wildfire-evac-app"
     }
   ];
 
@@ -275,12 +284,22 @@ export default function App() {
                    </div>
 
                    <div className="flex gap-4 mt-auto">
-                    <button className="p-3 rounded-full border border-[#2E4035] hover:bg-[#2E4035] hover:text-[#F3E5D0] transition-colors">
+                    <a 
+                      href={projects[currentProject].githubUrl || "#"} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 rounded-full border border-[#2E4035] hover:bg-[#2E4035] hover:text-[#F3E5D0] transition-colors flex items-center justify-center"
+                    >
                       <Github size={24} />
-                    </button>
-                    <button className="px-8 py-3 rounded-full bg-[#C19A6B] text-white font-sans text-xs font-bold tracking-widest hover:bg-[#A68256] transition-colors uppercase">
+                    </a>
+                    <a 
+                      href={projects[currentProject].liveUrl || "#"}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="px-8 py-3 rounded-full bg-[#C19A6B] text-white font-sans text-xs font-bold tracking-widest hover:bg-[#A68256] transition-colors uppercase inline-flex items-center justify-center"
+                    >
                       View Project
-                    </button>
+                    </a>
                   </div>
                 </div>
               </motion.div>
