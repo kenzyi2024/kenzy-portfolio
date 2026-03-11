@@ -20,6 +20,7 @@ import {
 
 import kenzyImg from './assets/kenzy.jpg';
 import logoImg from './assets/kenzyLogo.jpg';
+import resumePdf from './assets/resume.pdf';
 
 // --- Styles & Fonts ---
 const Styles = () => (
@@ -208,7 +209,7 @@ export default function App() {
           </p>
 
           <motion.a 
-            href="/Users/kenzyibrahim/kenzy-portfolio/src/assets/resume.pdf"
+            href={resumePdf}
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
@@ -390,7 +391,7 @@ export default function App() {
             <div className="mb-8">
                <p className="font-sans text-sm tracking-[0.2em] mb-6 text-[#C19A6B] uppercase">Connect with me on...</p>
                <div className="flex gap-6">
-                 <a href="https://github.com/kenzyi2024" className="hover:text-[#C19A6B] transition-colors"><Gi thub size={32} /></a>
+                 <a href="https://github.com/kenzyi2024" className="hover:text-[#C19A6B] transition-colors"><Github size={32} /></a>
                  <a href="https://www.linkedin.com/in/kenzyibrahim" className="hover:text-[#C19A6B] transition-colors"><Linkedin size={32} /></a>
                </div>
             </div>
