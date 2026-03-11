@@ -106,14 +106,18 @@ export default function App() {
       role: "Verizon AI Tech Fellow",
       tags: ["Python", "YOLOv8", "Computer Vision"],
       desc: "Automated bird detection system for telecom towers to prevent ecological damage and infrastructure downtime.",
-      icon: ScanEye
+      icon: ScanEye,
+      githubUrl: "https://github.com/JustinGaj/verizon-1a-project-falcon",
+      liveUrl: "#"
     },
     {
       title: "GMU Ticket Exchange",
       role: "Full Stack Web App",
       tags: ["React", "Full Stack", "Web App"],
       desc: "A secure, student-verified marketplace for buying and selling campus event tickets, eliminating scalping.",
-      icon: Ticket
+      icon: Ticket,
+      githubUrl: "#",
+      liveUrl: "#"
     },
     {
       title: "Wildfire Evac App",
@@ -121,7 +125,8 @@ export default function App() {
       tags: ["Emergency Tech", "Mapping", "Web App"],
       desc: "A routing and navigation application designed to help users find safe evacuation paths away from active wildfire zones.",
       icon: Flame,
-      githubUrl: "https://github.com/kenzyi2024/wildfire-evac-app"
+      githubUrl: "https://github.com/kenzyi2024/wildfire-evac-app",
+      liveUrl: "https://wildfire-evac-app.streamlit.app/"
     }
   ];
 
