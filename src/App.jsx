@@ -114,7 +114,7 @@ export default function App() {
       tags: ["React", "Full Stack", "Web App"],
       desc: "A secure, student-verified marketplace for buying and selling campus event tickets, eliminating scalping.",
       icon: Ticket
-    }
+    },
     {
       title: "Wildfire Evac App",
       role: "Software Project",
