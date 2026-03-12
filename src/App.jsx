@@ -102,6 +102,15 @@ export default function App() {
 
   const projects = [
     {
+      title: "Wildfire Evac App",
+      role: "Software Project",
+      tags: ["Emergency Tech", "Mapping", "Web App"],
+      desc: "A routing and navigation application designed to help users find safe evacuation paths away from active wildfire zones.",
+      icon: Flame,
+      githubUrl: "https://github.com/kenzyi2024/wildfire-evac-app",
+      liveUrl: "https://wildfire-evac-app.streamlit.app/"
+    },
+    {
       title: "Project Falcon",
       role: "Verizon AI Tech Fellow",
       tags: ["Python", "YOLOv8", "Computer Vision"],
@@ -118,15 +127,6 @@ export default function App() {
       icon: Ticket,
       githubUrl: "#",
       liveUrl: "#"
-    },
-    {
-      title: "Wildfire Evac App",
-      role: "Software Project",
-      tags: ["Emergency Tech", "Mapping", "Web App"],
-      desc: "A routing and navigation application designed to help users find safe evacuation paths away from active wildfire zones.",
-      icon: Flame,
-      githubUrl: "https://github.com/kenzyi2024/wildfire-evac-app",
-      liveUrl: "https://wildfire-evac-app.streamlit.app/"
     }
   ];
 
