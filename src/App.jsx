@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 
 import kenzyImg from './assets/kenzy.jpg';
-import logoImg from './assets/kenzyLogo.jpg';
+import logoImg from './assets/kenzyLogo.png';
 import resumePdf from './assets/resume.pdf';
 
 // --- Styles & Fonts ---
