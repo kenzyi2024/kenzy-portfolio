@@ -225,13 +225,13 @@ export default function App() {
             
             <div className="space-y-6 font-sans text-lg text-[#2E4035]/80 mb-12 leading-relaxed relative z-10">
               <p>
-                I am a Computer Science major (Class of May 2028) at George Mason University, pursuing a minor in Film and Video Studies. 
+                I am a Computer Science major (Class of May 2028) at George Mason University. 
               </p>
               <p>
                 My background in digital content creation deeply influences how I approach software engineering. I specialize in full-stack development, leveraging my eye for design to bridge the gap between elegant UI/UX and robust backend architecture. 
               </p>
               <p>
-                When I am not coding or managing the digital presence for the Undergraduate Research Office, you can find me baking cookies, building LEGO sets, or playing volleyball. I am an avid fiction reader and a dedicated enthusiast of technology that fundamentally improves our daily lives.
+                When I am not coding, you can find me playing volleyball or baking cookies. I am an avid reader and a dedicated enthusiast of technology that fundamentally improves our daily lives.
               </p>
             </div>
 
