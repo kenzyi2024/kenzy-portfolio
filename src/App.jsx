@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Menu, X, Github, Linkedin, Mail, Code2, Cpu, ScanEye, ChevronLeft, ChevronRight, Flame, ShieldAlert
+  Menu, X, Github, Linkedin, Mail, Code2, Cpu, ScanEye, ChevronLeft, ChevronRight, Flame, ShieldAlert, BookOpen
 } from 'lucide-react';
 
 import kenzyImg from './assets/kenzy.jpg';
@@ -92,13 +92,14 @@ export default function App() {
 
   const projects = [
     {
-      title: "Clear Path",
-      role: "Hardware & Software Project",
-      tags: ["C++", "Sensors", "Wearable Tech"],
-      desc: "Led software development for a wearable obstacle detection device designed to assist visually impaired individuals by providing real-time spatial feedback.",
-      icon: ShieldAlert,
-      githubUrl: "#"
-    },
+      title: "Book Tracker",
+      role: "Personal Library App",
+      tags: ["Web App", "UI/UX", "Tracking"],
+      desc: "A digital library management tool to track reading progress, manage personal book collections, and promote literary analysis.",
+      icon: BookOpen,
+      githubUrl: "https://github.com/kenzyi2024/Book-Tracker",
+      liveUrl: "https://book-tracker-ivory.vercel.app/"
+    }, 
     {
       title: "Wildfire Evac App",
       role: "Machine Learning Web App",
