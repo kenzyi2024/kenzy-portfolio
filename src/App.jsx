@@ -92,7 +92,7 @@ export default function App() {
 
   const projects = [
     {
-      title: "Book Tracker",
+      title: "BookNook",
       role: "Personal Library App",
       tags: ["Web App", "UI/UX", "Tracking"],
       desc: "A digital library management tool to track reading progress, manage personal book collections, and promote literary analysis.",
