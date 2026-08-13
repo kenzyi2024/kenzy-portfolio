@@ -456,8 +456,9 @@ const Terminal = () => {
     { type: 'out', text: "Hi, I’m Kenzy. Type 'help' to explore." },
   ]);
   const [input, setInput] = useState('');
-  const endRef = useRef(null);
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [history]);
+  const boxRef = useRef(null);
+  // Keep the terminal pinned to its latest line WITHOUT scrolling the page.
+  useEffect(() => { const b = boxRef.current; if (b) b.scrollTop = b.scrollHeight; }, [history]);
 
   const run = (raw) => {
     const cmd = raw.trim().toLowerCase();
@@ -496,9 +497,9 @@ const Terminal = () => {
         <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
         <span className="ml-3 font-mono text-xs text-white/50">kenzy@portfolio ~ %</span>
       </div>
-      <div className="p-5 font-mono text-sm h-72 overflow-y-auto text-[#c8e6c9]"
+      <div ref={boxRef} className="p-5 font-mono text-sm h-72 overflow-y-auto text-[#c8e6c9]"
         role="log" aria-live="polite" aria-label="Terminal output"
-        onClick={e => e.currentTarget.querySelector('input')?.focus()}>
+        onClick={e => e.currentTarget.querySelector('input')?.focus({ preventScroll: true })}>
         {history.map((h, i) => (
           <div key={i} className="mb-1 break-words">
             {h.type === 'in'
@@ -508,12 +509,11 @@ const Terminal = () => {
         ))}
         <div className="flex items-center">
           <span className="text-[#7fd18a] mr-2">$</span>
-          <input autoFocus value={input} onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && run(input)}
+          <input value={input} onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); run(input); } }}
             className="flex-1 bg-transparent outline-none text-white/90 caret-[#7fd18a]"
             spellCheck={false} aria-label="terminal input" />
         </div>
-        <div ref={endRef} />
       </div>
     </div>
   );
@@ -718,12 +718,14 @@ export default function App() {
           </motion.div>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
             className="font-mono text-[var(--on-panel)]/70 text-xs md:text-sm tracking-[0.3em] uppercase mb-4">
-            Kenzy Ibrahim · CS @ George Mason &apos;28
+            Software Engineer · CS @ George Mason &apos;28
           </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}
-            className="font-serif text-5xl md:text-8xl lg:text-9xl text-[var(--on-panel)] leading-[0.95] mb-6">
-            <span className="italic">Engineering</span><br />technology for life.
+            className="font-serif text-6xl md:text-8xl lg:text-9xl text-[var(--on-panel)] leading-[0.95] mb-5">
+            <span className="italic block md:inline md:mr-5">Kenzy</span>
+            <span className="block md:inline">Ibrahim</span>
           </motion.h1>
+          <p className="font-serif italic text-[var(--on-panel)]/70 text-xl md:text-2xl mb-4">Engineering technology for life.</p>
           <div className="h-8 mb-10">
             <span className="font-mono text-base md:text-xl text-[var(--accent-ondark)]">{typed}</span>
             <span className="blink text-[var(--accent-ondark)] font-mono text-base md:text-xl" aria-hidden="true">_</span>
