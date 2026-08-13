@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  motion, AnimatePresence, useInView, useMotionValue, useSpring, useScroll, useTransform
+  motion, AnimatePresence, useInView, useMotionValue, useSpring, useScroll, useTransform,
+  useReducedMotion
 } from 'framer-motion';
 import {
   Menu, X, Github, Linkedin, Mail, ArrowUpRight, ArrowDown, Sun, Moon,
@@ -23,11 +24,14 @@ const GlobalStyles = () => (
       --bg:#F3E5D0; --bg-alt:#F9F4EB; --ink:#2E4035; --accent:#C19A6B; --accent2:#B8B8AA;
       --panel:#2E4035; --on-panel:#F3E5D0; --card:#FBF6EE; --line:rgba(46,64,53,.18);
       --ink-70:rgba(46,64,53,.72);
+      --accent-text:#6E5026;   /* AA-readable accent for text/graphics on light surfaces */
+      --accent-ondark:#D8B482; /* AA-readable accent for text on dark panels */
     }
     [data-theme='dark'] {
       --bg:#151B17; --bg-alt:#1B221D; --ink:#EFE6D6; --accent:#D3AB78; --accent2:#8A9A8E;
       --panel:#0F1411; --on-panel:#EFE6D6; --card:#1F2621; --line:rgba(239,230,214,.16);
       --ink-70:rgba(239,230,214,.72);
+      --accent-text:#D3AB78; --accent-ondark:#D8B482;
     }
 
     .font-serif { font-family:'Playfair Display', serif; }
@@ -60,6 +64,24 @@ const GlobalStyles = () => (
     ::-webkit-scrollbar { width:10px; }
     ::-webkit-scrollbar-track { background:var(--bg-alt); }
     ::-webkit-scrollbar-thumb { background:var(--accent); border-radius:20px; }
+
+    /* Visible keyboard focus indicator (WCAG 2.4.7) */
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline:3px solid var(--accent-ondark); outline-offset:2px; border-radius:6px;
+    }
+    /* Screen-reader-only helper */
+    .sr-only {
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+    /* Respect reduced-motion preference (WCAG 2.3.3 / user comfort) */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration:0.001ms !important; animation-iteration-count:1 !important;
+        transition-duration:0.001ms !important; scroll-behavior:auto !important;
+      }
+      .blink { animation:none !important; }
+    }
   `}</style>
 );
 
@@ -286,16 +308,21 @@ const CustomCursor = () => {
 /* ============================================================
    ANIMATED BACKGROUND
    ============================================================ */
-const Blobs = () => (
-  <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-    <motion.div className="absolute w-[42rem] h-[42rem] rounded-full blur-3xl"
-      style={{ background: 'var(--accent)', opacity: 0.12, top: '-8rem', left: '-8rem' }}
-      animate={{ x: [0, 60, 0], y: [0, 40, 0] }} transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />
-    <motion.div className="absolute w-[36rem] h-[36rem] rounded-full blur-3xl"
-      style={{ background: 'var(--accent2)', opacity: 0.12, bottom: '-6rem', right: '-6rem' }}
-      animate={{ x: [0, -50, 0], y: [0, -30, 0] }} transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }} />
-  </div>
-);
+const Blobs = () => {
+  const reduce = useReducedMotion();
+  return (
+    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <motion.div className="absolute w-[42rem] h-[42rem] rounded-full blur-3xl"
+        style={{ background: 'var(--accent)', opacity: 0.12, top: '-8rem', left: '-8rem' }}
+        animate={reduce ? undefined : { x: [0, 60, 0], y: [0, 40, 0] }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="absolute w-[36rem] h-[36rem] rounded-full blur-3xl"
+        style={{ background: 'var(--accent2)', opacity: 0.12, bottom: '-6rem', right: '-6rem' }}
+        animate={reduce ? undefined : { x: [0, -50, 0], y: [0, -30, 0] }}
+        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }} />
+    </div>
+  );
+};
 
 /* ============================================================
    SHARED
@@ -305,7 +332,7 @@ const Heading = ({ children, light, align = 'text-center', kicker }) => (
     {kicker && (
       <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
         className="font-mono text-xs tracking-[0.3em] uppercase mb-3"
-        style={{ color: 'var(--accent)' }}>{kicker}</motion.p>
+        style={{ color: light ? 'var(--accent-ondark)' : 'var(--accent-text)' }}>{kicker}</motion.p>
     )}
     <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
       transition={{ duration: 0.6 }}
@@ -353,7 +380,7 @@ const ProjectPreview = ({ kind }) => {
   if (kind === 'falcon') {
     return (
       <BrowserFrame url="verizon · internal — project-falcon">
-        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#0e1310' }} preserveAspectRatio="xMidYMid slice">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#0e1310' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Computer-vision detection preview">
           {[...Array(9)].map((_, i) => <line key={'v' + i} x1={i * 40} y1="0" x2={i * 40} y2="200" stroke="#2E4035" strokeWidth="0.5" opacity="0.5" />)}
           {[...Array(6)].map((_, i) => <line key={'h' + i} x1="0" y1={i * 40} x2="320" y2={i * 40} stroke="#2E4035" strokeWidth="0.5" opacity="0.5" />)}
           <g stroke="var(--accent)" strokeWidth="1.5" fill="none">
@@ -377,7 +404,7 @@ const ProjectPreview = ({ kind }) => {
     const spines = [['#2E4035', 78], ['#C19A6B', 96], ['#8A9A8E', 66], ['#3c5245', 88], ['#B8956A', 72], ['#546b5a', 92], ['#C19A6B', 60], ['#2E4035', 84], ['#9AA79B', 76]];
     return (
       <BrowserFrame url="book-tracker-ivory.vercel.app">
-        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#F9F4EB' }} preserveAspectRatio="xMidYMid slice">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#F9F4EB' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="BookNook library app preview">
           <rect x="16" y="16" width="200" height="16" rx="8" fill="#fff" stroke="#2E4035" strokeOpacity="0.15" />
           <circle cx="26" cy="24" r="3.5" fill="none" stroke="#C19A6B" strokeWidth="1.5" /><line x1="28.5" y1="26.5" x2="31" y2="29" stroke="#C19A6B" strokeWidth="1.5" />
           <text x="40" y="27" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.5">search 10,000+ books…</text>
@@ -398,7 +425,7 @@ const ProjectPreview = ({ kind }) => {
   // wildfire
   return (
     <BrowserFrame url="wildfire-evac-app.streamlit.app">
-      <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#151B17' }} preserveAspectRatio="xMidYMid slice">
+      <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#151B17' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Wildfire risk map preview">
         <defs>
           <radialGradient id="risk" cx="62%" cy="45%" r="55%">
             <stop offset="0%" stopColor="#C19A6B" stopOpacity="0.9" />
@@ -470,6 +497,7 @@ const Terminal = () => {
         <span className="ml-3 font-mono text-xs text-white/50">kenzy@portfolio ~ %</span>
       </div>
       <div className="p-5 font-mono text-sm h-72 overflow-y-auto text-[#c8e6c9]"
+        role="log" aria-live="polite" aria-label="Terminal output"
         onClick={e => e.currentTarget.querySelector('input')?.focus()}>
         {history.map((h, i) => (
           <div key={i} className="mb-1 break-words">
@@ -545,30 +573,43 @@ const ContactForm = () => {
       <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-xl mx-auto rounded-2xl p-10 text-center border"
         style={{ background: 'rgba(255,255,255,.05)', borderColor: 'rgba(255,255,255,.16)' }}>
-        <CheckCircle2 size={44} className="mx-auto mb-4" style={{ color: 'var(--accent)' }} />
+        <CheckCircle2 size={44} className="mx-auto mb-4" style={{ color: 'var(--accent-ondark)' }} aria-hidden="true" />
         <h3 className="font-serif text-3xl text-[var(--on-panel)] mb-2">Message on its way.</h3>
         <p className="font-sans text-[var(--on-panel)]/60 mb-6">Thanks for reaching out — I&apos;ll get back to you soon.</p>
         <button onClick={() => setStatus('idle')}
-          className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--accent)' }}>
+          className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--accent-ondark)' }}>
           Send another →
         </button>
       </motion.div>
     );
   }
 
+  const labelCls = 'block font-mono text-[10px] tracking-widest uppercase mb-2 text-[var(--on-panel)]/80';
+  const described = error ? 'cf-error' : undefined;
+
   return (
-    <form onSubmit={submit} data-cursor className="w-full max-w-xl mx-auto text-left">
+    <form onSubmit={submit} noValidate data-cursor className="w-full max-w-xl mx-auto text-left">
       <div className="grid sm:grid-cols-2 gap-4 mb-4">
-        <input name="name" value={form.name} onChange={update} placeholder="Your name"
-          className={field} style={fieldStyle} aria-label="Your name" />
-        <input name="email" type="email" value={form.email} onChange={update} placeholder="you@email.com"
-          className={field} style={fieldStyle} aria-label="Your email" />
+        <div>
+          <label htmlFor="cf-name" className={labelCls}>Name</label>
+          <input id="cf-name" name="name" value={form.name} onChange={update} placeholder="Your name"
+            required aria-required="true" autoComplete="name" aria-describedby={described}
+            className={field} style={fieldStyle} />
+        </div>
+        <div>
+          <label htmlFor="cf-email" className={labelCls}>Email</label>
+          <input id="cf-email" name="email" type="email" value={form.email} onChange={update} placeholder="you@email.com"
+            required aria-required="true" autoComplete="email" aria-describedby={described}
+            className={field} style={fieldStyle} />
+        </div>
       </div>
-      <textarea name="message" value={form.message} onChange={update} rows={4} placeholder="What would you like to build together?"
-        className={`${field} resize-none mb-4`} style={fieldStyle} aria-label="Your message" />
+      <label htmlFor="cf-message" className={labelCls}>Message</label>
+      <textarea id="cf-message" name="message" value={form.message} onChange={update} rows={4}
+        placeholder="What would you like to build together?" required aria-required="true" aria-describedby={described}
+        className={`${field} resize-none mb-4`} style={fieldStyle} />
       {error && (
-        <p className="flex items-center gap-2 font-sans text-sm mb-4" style={{ color: '#e8a87c' }}>
-          <AlertCircle size={16} /> {error}
+        <p id="cf-error" role="alert" className="flex items-center gap-2 font-sans text-sm mb-4" style={{ color: '#F0B58A' }}>
+          <AlertCircle size={16} aria-hidden="true" /> {error}
         </p>
       )}
       <button type="submit" disabled={status === 'submitting'}
@@ -594,6 +635,14 @@ export default function App() {
   const { scrollYProgress } = useScroll();
   const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -80]);
 
+  // Close the fullscreen menu with Escape (WCAG 2.1.2 — no keyboard trap)
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = e => { if (e.key === 'Escape') setMenuOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
   const menuItems = [
     ['About', '#about'], ['Experience', '#experience'], ['Projects', '#projects'],
     ['Skills', '#skills'], ['Terminal', '#terminal'], ['Contact', '#contact'],
@@ -612,14 +661,14 @@ export default function App() {
 
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-[65] px-6 md:px-10 py-5 flex justify-between items-center">
-        <a href="#top" className="font-serif text-xl md:text-2xl font-bold mix-blend-difference text-white">KI.</a>
+        <a href="#top" aria-label="Back to top" className="font-serif text-xl md:text-2xl font-bold mix-blend-difference text-white">KI.</a>
         <div className="flex items-center gap-3">
           <button onClick={toggleTheme} aria-label="Toggle theme"
             className="p-2.5 rounded-full border hover:scale-110 transition-transform mix-blend-difference text-white"
             style={{ borderColor: 'rgba(255,255,255,.4)' }}>
             {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
           </button>
-          <button onClick={() => setMenuOpen(true)} aria-label="Open menu"
+          <button onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-haspopup="dialog" aria-expanded={menuOpen}
             className="p-2.5 rounded-full mix-blend-difference text-white hover:scale-110 transition-transform">
             <Menu size={22} />
           </button>
@@ -629,7 +678,8 @@ export default function App() {
       {/* FULLSCREEN MENU */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div initial={{ clipPath: 'circle(0% at 100% 0%)' }}
+          <motion.div role="dialog" aria-modal="true" aria-label="Site navigation menu"
+            initial={{ clipPath: 'circle(0% at 100% 0%)' }}
             animate={{ clipPath: 'circle(150% at 100% 0%)' }}
             exit={{ clipPath: 'circle(0% at 100% 0%)' }} transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
             className="fixed inset-0 z-[80] flex flex-col p-6 md:p-10" style={{ background: 'var(--panel)' }}>
@@ -675,8 +725,8 @@ export default function App() {
             <span className="italic">Engineering</span><br />technology for life.
           </motion.h1>
           <div className="h-8 mb-10">
-            <span className="font-mono text-base md:text-xl text-[var(--accent)]">{typed}</span>
-            <span className="blink text-[var(--accent)] font-mono text-base md:text-xl">_</span>
+            <span className="font-mono text-base md:text-xl text-[var(--accent-ondark)]">{typed}</span>
+            <span className="blink text-[var(--accent-ondark)] font-mono text-base md:text-xl" aria-hidden="true">_</span>
           </div>
           <div className="flex flex-wrap gap-4 justify-center">
             <MagneticButton href={resumePdf} target="_blank" rel="noreferrer"
@@ -707,7 +757,7 @@ export default function App() {
               <div className="font-serif font-bold text-4xl md:text-6xl" style={{ color: 'var(--ink)' }}>
                 <CountUp value={s.value} decimals={s.decimals || 0} suffix={s.suffix || ''} />
               </div>
-              <div className="font-mono text-[10px] md:text-xs tracking-widest uppercase mt-2" style={{ color: 'var(--accent)' }}>
+              <div className="font-mono text-[10px] md:text-xs tracking-widest uppercase mt-2" style={{ color: 'var(--accent-text)' }}>
                 {s.label}
               </div>
             </motion.div>
@@ -736,7 +786,7 @@ export default function App() {
               {CERTS.map(c => (
                 <div key={c.name} className="flex items-center gap-2 px-4 py-2.5 rounded-full border font-mono text-xs"
                   style={{ borderColor: 'var(--line)', color: 'var(--ink-70)' }}>
-                  <Award size={14} style={{ color: 'var(--accent)' }} />
+                  <Award size={14} style={{ color: 'var(--accent-text)' }} />
                   {c.name} · {c.org}
                 </div>
               ))}
@@ -758,13 +808,13 @@ export default function App() {
                   style={{ background: 'var(--accent)', ['--tw-ring-color']: 'var(--bg-alt)' }} />
                 <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
                   <h3 className="text-2xl md:text-3xl font-serif font-bold" style={{ color: 'var(--ink)' }}>{exp.title}</h3>
-                  <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--accent)' }}>{exp.date}</span>
+                  <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--accent-text)' }}>{exp.date}</span>
                 </div>
                 <p className="font-sans font-bold tracking-wide mb-3" style={{ color: 'var(--ink-70)' }}>{exp.company}</p>
                 <ul className="space-y-2 mb-4">
                   {exp.points.map((p, j) => (
                     <li key={j} className="font-sans leading-relaxed flex gap-3" style={{ color: 'var(--ink-70)' }}>
-                      <span style={{ color: 'var(--accent)' }}>▹</span><span>{p}</span>
+                      <span style={{ color: 'var(--accent-text)' }} aria-hidden="true">▹</span><span>{p}</span>
                     </li>
                   ))}
                 </ul>
@@ -821,7 +871,7 @@ export default function App() {
                     )}
                   </div>
                 </div>
-                <p className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: 'var(--accent)' }}>{p.role}</p>
+                <p className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: 'var(--accent-text)' }}>{p.role}</p>
                 <p className="font-sans text-sm leading-relaxed mb-5 flex-grow" style={{ color: 'var(--ink-70)' }}>{p.desc}</p>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {p.metrics.map(m => (
@@ -849,7 +899,7 @@ export default function App() {
               viewport={{ once: true }} transition={{ delay: ci * 0.1 }}
               className="rounded-3xl p-7 border" style={{ background: 'var(--bg-alt)', borderColor: 'var(--line)' }}>
               <div className="flex items-center gap-3 mb-6">
-                {React.createElement(cat.icon, { size: 20, style: { color: 'var(--accent)' } })}
+                {React.createElement(cat.icon, { size: 20, style: { color: 'var(--accent-text)' } })}
                 <h3 className="font-sans font-bold tracking-widest uppercase text-sm" style={{ color: 'var(--ink)' }}>{cat.group}</h3>
               </div>
               <div className="space-y-4">
@@ -858,10 +908,11 @@ export default function App() {
                     <div className="flex justify-between font-mono text-xs mb-1.5" style={{ color: 'var(--ink-70)' }}>
                       <span>{s.name}</span>
                     </div>
-                    <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--line)' }}>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--line)' }}
+                      role="img" aria-label={`${s.name} proficiency: ${s.level} percent`}>
                       <motion.div initial={{ width: 0 }} whileInView={{ width: `${s.level}%` }}
                         viewport={{ once: true }} transition={{ duration: 1, delay: 0.2 + si * 0.08, ease: 'easeOut' }}
-                        className="h-full rounded-full" style={{ background: 'var(--accent)' }} />
+                        className="h-full rounded-full" style={{ background: 'var(--accent-text)' }} />
                     </div>
                   </div>
                 ))}
@@ -874,7 +925,7 @@ export default function App() {
       {/* TERMINAL */}
       <section id="terminal" className="relative z-10 py-24 px-6" style={{ background: 'var(--bg-alt)' }}>
         <Heading kicker="/ interactive">
-          <span className="inline-flex items-center gap-3"><TerminalIcon size={38} style={{ color: 'var(--accent)' }} /> Poke around</span>
+          <span className="inline-flex items-center gap-3"><TerminalIcon size={38} style={{ color: 'var(--accent-text)' }} aria-hidden="true" /> Poke around</span>
         </Heading>
         <Terminal />
         <p className="text-center font-mono text-xs mt-6" style={{ color: 'var(--ink-70)' }}>
@@ -890,7 +941,7 @@ export default function App() {
         </div>
         <div className="relative z-10 flex flex-col items-center w-full">
           <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-            className="font-mono text-xs tracking-[0.3em] uppercase mb-4" style={{ color: 'var(--accent)' }}>/ contact</motion.p>
+            className="font-mono text-xs tracking-[0.3em] uppercase mb-4" style={{ color: 'var(--accent-ondark)' }}>/ contact</motion.p>
           <h2 className="font-serif text-5xl md:text-8xl text-[var(--on-panel)] mb-4">Let&apos;s build something.</h2>
           <p className="font-sans text-[var(--on-panel)]/60 max-w-md mb-10">Open to software engineering internships. The inbox is always on.</p>
 
@@ -898,7 +949,7 @@ export default function App() {
 
           <div className="flex items-center gap-4 w-full max-w-xl mx-auto mb-8">
             <span className="flex-1 h-px" style={{ background: 'rgba(255,255,255,.14)' }} />
-            <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--on-panel)]/40">or find me at</span>
+            <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--on-panel)]/70">or find me at</span>
             <span className="flex-1 h-px" style={{ background: 'rgba(255,255,255,.14)' }} />
           </div>
 
@@ -919,7 +970,7 @@ export default function App() {
               <Github size={18} /> kenzyi2024
             </MagneticButton>
           </div>
-          <div className="w-full max-w-2xl flex flex-col sm:flex-row justify-between items-center gap-3 text-[var(--on-panel)]/40 text-xs font-mono tracking-widest uppercase border-t pt-8"
+          <div className="w-full max-w-2xl flex flex-col sm:flex-row justify-between items-center gap-3 text-[var(--on-panel)]/70 text-xs font-mono tracking-widest uppercase border-t pt-8"
             style={{ borderColor: 'rgba(255,255,255,.1)' }}>
             <span>© 2026 Kenzy Ibrahim</span>
             <span className="inline-flex items-center gap-2"><Sparkles size={12} /> Built with React + Framer Motion</span>
