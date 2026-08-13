@@ -661,7 +661,9 @@ export default function App() {
 
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-[65] px-6 md:px-10 py-5 flex justify-between items-center">
-        <a href="#top" aria-label="Back to top" className="font-serif text-xl md:text-2xl font-bold mix-blend-difference text-white">KI.</a>
+        <a href="#top" aria-label="Back to top" className="flex items-center">
+          <img src={logoImg} alt="Kenzy Ibrahim" className="h-8 md:h-10 w-auto object-contain" />
+        </a>
         <div className="flex items-center gap-3">
           <button onClick={toggleTheme} aria-label="Toggle theme"
             className="p-2.5 rounded-full border hover:scale-110 transition-transform mix-blend-difference text-white"
