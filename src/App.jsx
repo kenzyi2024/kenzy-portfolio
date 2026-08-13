@@ -5,7 +5,7 @@ import {
 import {
   Menu, X, Github, Linkedin, Mail, ArrowUpRight, ArrowDown, Sun, Moon,
   Flame, ScanEye, BookOpen, Terminal as TerminalIcon, ExternalLink, Sparkles,
-  Award, Cpu, Code2, Braces
+  Award, Cpu, Code2, Braces, Send, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 
 import kenzyImg from './assets/kenzy.jpg';
@@ -72,6 +72,11 @@ const LINKS = {
   linkedin: 'https://www.linkedin.com/in/kenzyibrahim',
 };
 
+// Contact form: paste a free Formspree form ID (https://formspree.io) to receive
+// submissions by email. Until then, the form gracefully falls back to opening the
+// visitor's mail client with the message pre-filled — so it works out of the box.
+const FORM_ENDPOINT = 'https://formspree.io/f/your_form_id';
+
 const STATS = [
   { value: 3.7, decimals: 1, label: 'GPA · Dean’s List' },
   { value: 25000, suffix: '+', label: 'Users reached' },
@@ -128,6 +133,7 @@ const PROJECTS = [
     title: 'Project Falcon',
     role: 'AI Tech Fellow · Verizon',
     icon: ScanEye,
+    preview: 'falcon',
     desc: 'A YOLOv8-powered computer-vision system that replaced manual telecom infrastructure inspections. Featured a custom "Confidence Gating" algorithm and a fault-tolerant ingestion pipeline handling 2,000+ images.',
     metrics: ['95% reliability', '40% lower latency', 'Team of 8'],
     tags: ['Python', 'YOLOv8', 'Computer Vision'],
@@ -137,6 +143,7 @@ const PROJECTS = [
     title: 'BookNook',
     role: 'Full-Stack Engineer',
     icon: BookOpen,
+    preview: 'booknook',
     desc: 'A full-stack personal library that powers context-aware text analysis, guided Socratic seminars, and Smart Recaps across a catalog of 10,000+ books from the BookLib API. Built with a state-driven cache to eliminate redundant calls.',
     metrics: ['10,000+ books', 'State-driven cache'],
     tags: ['React', 'MongoDB', 'Google Cloud'],
@@ -147,6 +154,7 @@ const PROJECTS = [
     title: 'Wildfire Evacuation Threat Predictor',
     role: 'ML Engineer',
     icon: Flame,
+    preview: 'wildfire',
     desc: 'A predictive web app that helps emergency managers triage wildfire risk and prioritize evacuations across 12–72 hour horizons using Random Survival Forests and Gradient Boosting Survival Analysis, validated on real WatchDuty data.',
     metrics: ['12–72h horizons', 'C-index + Brier tuned'],
     tags: ['Python', 'Streamlit', 'Scikit-learn'],
@@ -325,6 +333,95 @@ const MagneticButton = ({ children, className = '', ...props }) => {
 };
 
 /* ============================================================
+   PROJECT PREVIEW  (on-brand SVG mockups — swap for real
+   screenshots by dropping an <img> in place of <ProjectPreview/>)
+   ============================================================ */
+const BrowserFrame = ({ url, children }) => (
+  <div className="rounded-t-2xl overflow-hidden">
+    <div className="flex items-center gap-1.5 px-3 py-2" style={{ background: 'var(--panel)' }}>
+      <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+      <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+      <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+      <span className="ml-2 flex-1 truncate rounded-md px-2 py-0.5 font-mono text-[9px] text-white/50"
+        style={{ background: 'rgba(255,255,255,.08)' }}>{url}</span>
+    </div>
+    <div className="relative aspect-[16/10] overflow-hidden">{children}</div>
+  </div>
+);
+
+const ProjectPreview = ({ kind }) => {
+  if (kind === 'falcon') {
+    return (
+      <BrowserFrame url="verizon · internal — project-falcon">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#0e1310' }} preserveAspectRatio="xMidYMid slice">
+          {[...Array(9)].map((_, i) => <line key={'v' + i} x1={i * 40} y1="0" x2={i * 40} y2="200" stroke="#2E4035" strokeWidth="0.5" opacity="0.5" />)}
+          {[...Array(6)].map((_, i) => <line key={'h' + i} x1="0" y1={i * 40} x2="320" y2={i * 40} stroke="#2E4035" strokeWidth="0.5" opacity="0.5" />)}
+          <g stroke="var(--accent)" strokeWidth="1.5" fill="none">
+            <rect x="34" y="46" width="72" height="58" rx="3" />
+            <rect x="150" y="70" width="90" height="66" rx="3" />
+            <rect x="210" y="30" width="60" height="44" rx="3" />
+          </g>
+          <g fontFamily="monospace" fontSize="7" fill="var(--accent)">
+            <rect x="34" y="38" width="52" height="9" fill="var(--accent)" /><text x="37" y="45" fill="#0e1310">tower 0.97</text>
+            <rect x="150" y="62" width="46" height="9" fill="var(--accent)" /><text x="153" y="69" fill="#0e1310">line 0.95</text>
+            <rect x="210" y="22" width="44" height="9" fill="var(--accent)" /><text x="213" y="29" fill="#0e1310">node 0.93</text>
+          </g>
+          <motion.rect x="0" width="320" height="2" fill="var(--accent)" opacity="0.6"
+            animate={{ y: [10, 190, 10] }} transition={{ duration: 4, repeat: Infinity, ease: 'linear' }} />
+          <text x="12" y="188" fontFamily="monospace" fontSize="9" fill="#e8f0e8">confidence gating · reliability 95%</text>
+        </svg>
+      </BrowserFrame>
+    );
+  }
+  if (kind === 'booknook') {
+    const spines = [['#2E4035', 78], ['#C19A6B', 96], ['#8A9A8E', 66], ['#3c5245', 88], ['#B8956A', 72], ['#546b5a', 92], ['#C19A6B', 60], ['#2E4035', 84], ['#9AA79B', 76]];
+    return (
+      <BrowserFrame url="book-tracker-ivory.vercel.app">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#F9F4EB' }} preserveAspectRatio="xMidYMid slice">
+          <rect x="16" y="16" width="200" height="16" rx="8" fill="#fff" stroke="#2E4035" strokeOpacity="0.15" />
+          <circle cx="26" cy="24" r="3.5" fill="none" stroke="#C19A6B" strokeWidth="1.5" /><line x1="28.5" y1="26.5" x2="31" y2="29" stroke="#C19A6B" strokeWidth="1.5" />
+          <text x="40" y="27" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.5">search 10,000+ books…</text>
+          <rect x="228" y="16" width="76" height="16" rx="8" fill="#2E4035" /><text x="243" y="27" fontFamily="monospace" fontSize="8" fill="#F9F4EB">+ recap</text>
+          {spines.map(([c, h], i) => (
+            <g key={i}>
+              <rect x={20 + i * 33} y={168 - h} width="26" height={h} rx="2" fill={c} />
+              <rect x={20 + i * 33} y={168 - h + 6} width="26" height="3" fill="#000" opacity="0.12" />
+              <rect x={20 + i * 33} y={162} width="26" height="4" fill="#000" opacity="0.15" />
+            </g>
+          ))}
+          <line x1="16" y1="168" x2="304" y2="168" stroke="#2E4035" strokeOpacity="0.25" strokeWidth="1.5" />
+          <text x="16" y="190" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.6">Socratic seminar · Smart Recaps · React + MongoDB</text>
+        </svg>
+      </BrowserFrame>
+    );
+  }
+  // wildfire
+  return (
+    <BrowserFrame url="wildfire-evac-app.streamlit.app">
+      <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#151B17' }} preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <radialGradient id="risk" cx="62%" cy="45%" r="55%">
+            <stop offset="0%" stopColor="#C19A6B" stopOpacity="0.9" />
+            <stop offset="45%" stopColor="#C19A6B" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#2E4035" stopOpacity="0.05" />
+          </radialGradient>
+        </defs>
+        <rect width="320" height="200" fill="url(#risk)" />
+        {[...Array(7)].map((_, i) => <path key={i} d={`M0 ${30 + i * 26} Q 80 ${18 + i * 26} 160 ${30 + i * 26} T 320 ${30 + i * 26}`} fill="none" stroke="#8A9A8E" strokeWidth="0.6" opacity="0.4" />)}
+        {[40, 62, 84].map((r, i) => <circle key={i} cx="198" cy="90" r={r} fill="none" stroke="#C19A6B" strokeWidth="1" opacity={0.5 - i * 0.12} />)}
+        <motion.g animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 1.6, repeat: Infinity }} style={{ transformOrigin: '198px 90px' }}>
+          <path d="M198 74 C 206 84, 206 92, 198 100 C 190 92, 190 84, 198 74 Z" fill="#C19A6B" />
+        </motion.g>
+        <rect x="12" y="12" width="120" height="34" rx="6" fill="#0f1411" opacity="0.7" />
+        <text x="22" y="28" fontFamily="monospace" fontSize="8" fill="#e8f0e8">Threat horizon</text>
+        <text x="22" y="40" fontFamily="monospace" fontSize="11" fill="#C19A6B">12–72h · high</text>
+        <text x="12" y="190" fontFamily="monospace" fontSize="8" fill="#e8f0e8" opacity="0.8">Random Survival Forests · C-index tuned</text>
+      </svg>
+    </BrowserFrame>
+  );
+};
+
+/* ============================================================
    INTERACTIVE TERMINAL
    ============================================================ */
 const Terminal = () => {
@@ -391,6 +488,97 @@ const Terminal = () => {
         <div ref={endRef} />
       </div>
     </div>
+  );
+};
+
+/* ============================================================
+   CONTACT FORM  (Formspree when configured, mailto fallback)
+   ============================================================ */
+const ContactForm = () => {
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('idle'); // idle | submitting | success | error
+  const [error, setError] = useState('');
+
+  const update = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
+  const valid = form.name.trim() && emailOk && form.message.trim().length >= 10;
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!valid) {
+      setError('Please add your name, a valid email, and a message of at least 10 characters.');
+      return;
+    }
+    setError('');
+    const configured = FORM_ENDPOINT && !FORM_ENDPOINT.includes('your_form_id');
+
+    if (!configured) {
+      // Zero-config fallback: open the visitor's mail client, pre-filled.
+      const subject = encodeURIComponent(`Portfolio message from ${form.name}`);
+      const body = encodeURIComponent(`${form.message}\n\n— ${form.name} (${form.email})`);
+      window.location.href = `mailto:${LINKS.email}?subject=${subject}&body=${body}`;
+      setStatus('success');
+      return;
+    }
+    try {
+      setStatus('submitting');
+      const res = await fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) { setStatus('success'); setForm({ name: '', email: '', message: '' }); }
+      else { setStatus('error'); setError('Something went wrong — please email me directly.'); }
+    } catch {
+      setStatus('error'); setError('Network hiccup — please email me directly.');
+    }
+  };
+
+  const field = 'w-full rounded-xl px-4 py-3 font-sans text-sm outline-none transition-colors';
+  const fieldStyle = {
+    background: 'rgba(255,255,255,.06)', color: 'var(--on-panel)',
+    border: '1px solid rgba(255,255,255,.16)',
+  };
+
+  if (status === 'success') {
+    return (
+      <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-xl mx-auto rounded-2xl p-10 text-center border"
+        style={{ background: 'rgba(255,255,255,.05)', borderColor: 'rgba(255,255,255,.16)' }}>
+        <CheckCircle2 size={44} className="mx-auto mb-4" style={{ color: 'var(--accent)' }} />
+        <h3 className="font-serif text-3xl text-[var(--on-panel)] mb-2">Message on its way.</h3>
+        <p className="font-sans text-[var(--on-panel)]/60 mb-6">Thanks for reaching out — I&apos;ll get back to you soon.</p>
+        <button onClick={() => setStatus('idle')}
+          className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--accent)' }}>
+          Send another →
+        </button>
+      </motion.div>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} data-cursor className="w-full max-w-xl mx-auto text-left">
+      <div className="grid sm:grid-cols-2 gap-4 mb-4">
+        <input name="name" value={form.name} onChange={update} placeholder="Your name"
+          className={field} style={fieldStyle} aria-label="Your name" />
+        <input name="email" type="email" value={form.email} onChange={update} placeholder="you@email.com"
+          className={field} style={fieldStyle} aria-label="Your email" />
+      </div>
+      <textarea name="message" value={form.message} onChange={update} rows={4} placeholder="What would you like to build together?"
+        className={`${field} resize-none mb-4`} style={fieldStyle} aria-label="Your message" />
+      {error && (
+        <p className="flex items-center gap-2 font-sans text-sm mb-4" style={{ color: '#e8a87c' }}>
+          <AlertCircle size={16} /> {error}
+        </p>
+      )}
+      <button type="submit" disabled={status === 'submitting'}
+        className="w-full sm:w-auto px-8 py-3.5 rounded-full font-sans font-bold text-xs tracking-widest uppercase inline-flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 hover:scale-[1.02] transition-transform"
+        style={{ background: 'var(--accent)', color: '#1c130a' }}>
+        {status === 'submitting'
+          ? <><Loader2 size={16} className="animate-spin" /> Sending…</>
+          : <>Send message <Send size={16} /></>}
+      </button>
+    </form>
   );
 };
 
@@ -600,43 +788,52 @@ export default function App() {
             <motion.article key={p.title} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }} transition={{ delay: i * 0.12 }}
               whileHover={{ y: -8 }} data-cursor
-              className="group rounded-3xl p-7 flex flex-col shadow-xl border"
+              className="group rounded-3xl overflow-hidden flex flex-col shadow-xl border"
               style={{ background: 'var(--card)', borderColor: 'var(--line)' }}>
-              <div className="flex items-center justify-between mb-6">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
-                  style={{ background: 'var(--bg)' }}>
-                  {React.createElement(p.icon, { size: 26, style: { color: 'var(--accent)' } })}
-                </div>
-                <div className="flex gap-2">
-                  {p.github && (
-                    <a href={p.github} target="_blank" rel="noreferrer" aria-label="GitHub repo"
-                      className="p-2 rounded-full border hover:scale-110 transition-transform"
-                      style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><Github size={16} /></a>
-                  )}
-                  {p.live && (
-                    <a href={p.live} target="_blank" rel="noreferrer" aria-label="Live demo"
-                      className="p-2 rounded-full border hover:scale-110 transition-transform"
-                      style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><ExternalLink size={16} /></a>
-                  )}
-                  {p.proprietary && (
-                    <span className="px-3 py-1.5 rounded-full font-mono text-[9px] tracking-wider uppercase self-center"
-                      style={{ background: 'var(--bg)', color: 'var(--ink-70)' }}>Proprietary</span>
-                  )}
-                </div>
+              <div className="relative">
+                <ProjectPreview kind={p.preview} />
+                {p.live && (
+                  <a href={p.live} target="_blank" rel="noreferrer"
+                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ background: 'rgba(14,19,15,.55)' }} aria-label={`Open ${p.title} live`}>
+                    <span className="px-5 py-2.5 rounded-full font-sans text-xs font-bold tracking-widest uppercase inline-flex items-center gap-2"
+                      style={{ background: 'var(--accent)', color: '#1c130a' }}>Live demo <ExternalLink size={14} /></span>
+                  </a>
+                )}
               </div>
-              <h3 className="font-serif font-bold text-2xl mb-1" style={{ color: 'var(--ink)' }}>{p.title}</h3>
-              <p className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: 'var(--accent)' }}>{p.role}</p>
-              <p className="font-sans text-sm leading-relaxed mb-5 flex-grow" style={{ color: 'var(--ink-70)' }}>{p.desc}</p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {p.metrics.map(m => (
-                  <span key={m} className="px-3 py-1 rounded-full font-sans text-xs font-bold"
-                    style={{ background: 'var(--accent)', color: '#1c130a' }}>{m}</span>
-                ))}
-              </div>
-              <div className="flex flex-wrap gap-2 pt-4 border-t" style={{ borderColor: 'var(--line)' }}>
-                {p.tags.map(t => (
-                  <span key={t} className="font-mono text-[10px] tracking-wider uppercase" style={{ color: 'var(--ink-70)' }}>#{t}</span>
-                ))}
+              <div className="p-7 flex flex-col flex-grow">
+                <div className="flex items-start justify-between gap-3 mb-1">
+                  <h3 className="font-serif font-bold text-2xl" style={{ color: 'var(--ink)' }}>{p.title}</h3>
+                  <div className="flex gap-2 shrink-0 pt-1">
+                    {p.github && (
+                      <a href={p.github} target="_blank" rel="noreferrer" aria-label="GitHub repo"
+                        className="p-2 rounded-full border hover:scale-110 transition-transform"
+                        style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><Github size={16} /></a>
+                    )}
+                    {p.live && (
+                      <a href={p.live} target="_blank" rel="noreferrer" aria-label="Live demo"
+                        className="p-2 rounded-full border hover:scale-110 transition-transform"
+                        style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><ExternalLink size={16} /></a>
+                    )}
+                    {p.proprietary && (
+                      <span className="px-3 py-1.5 rounded-full font-mono text-[9px] tracking-wider uppercase self-center"
+                        style={{ background: 'var(--bg)', color: 'var(--ink-70)' }}>Proprietary</span>
+                    )}
+                  </div>
+                </div>
+                <p className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: 'var(--accent)' }}>{p.role}</p>
+                <p className="font-sans text-sm leading-relaxed mb-5 flex-grow" style={{ color: 'var(--ink-70)' }}>{p.desc}</p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {p.metrics.map(m => (
+                    <span key={m} className="px-3 py-1 rounded-full font-sans text-xs font-bold"
+                      style={{ background: 'var(--accent)', color: '#1c130a' }}>{m}</span>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-2 pt-4 border-t" style={{ borderColor: 'var(--line)' }}>
+                  {p.tags.map(t => (
+                    <span key={t} className="font-mono text-[10px] tracking-wider uppercase" style={{ color: 'var(--ink-70)' }}>#{t}</span>
+                  ))}
+                </div>
               </div>
             </motion.article>
           ))}
@@ -695,7 +892,16 @@ export default function App() {
           <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
             className="font-mono text-xs tracking-[0.3em] uppercase mb-4" style={{ color: 'var(--accent)' }}>/ contact</motion.p>
           <h2 className="font-serif text-5xl md:text-8xl text-[var(--on-panel)] mb-4">Let&apos;s build something.</h2>
-          <p className="font-sans text-[var(--on-panel)]/60 max-w-md mb-12">Open to software engineering internships. The inbox is always on.</p>
+          <p className="font-sans text-[var(--on-panel)]/60 max-w-md mb-10">Open to software engineering internships. The inbox is always on.</p>
+
+          <div className="w-full mb-10"><ContactForm /></div>
+
+          <div className="flex items-center gap-4 w-full max-w-xl mx-auto mb-8">
+            <span className="flex-1 h-px" style={{ background: 'rgba(255,255,255,.14)' }} />
+            <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--on-panel)]/40">or find me at</span>
+            <span className="flex-1 h-px" style={{ background: 'rgba(255,255,255,.14)' }} />
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-4 mb-16">
             <MagneticButton href={`mailto:${LINKS.email}`}
               className="px-8 py-4 rounded-full inline-flex items-center gap-3 font-sans text-sm shadow-lg"
