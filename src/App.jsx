@@ -6,7 +6,7 @@ import {
 import {
   Menu, X, Github, Linkedin, Mail, ArrowUpRight, ArrowDown, Sun, Moon,
   Flame, ScanEye, BookOpen, Terminal as TerminalIcon, ExternalLink, Sparkles,
-  Award, Cpu, Code2, Braces, Send, Loader2, CheckCircle2, AlertCircle
+  Award, Cpu, Code2, Braces, Send, Loader2, CheckCircle2, AlertCircle, CalendarClock, Pill
 } from 'lucide-react';
 
 import kenzyImg from './assets/kenzy.jpg';
@@ -182,6 +182,26 @@ const PROJECTS = [
     tags: ['Python', 'Streamlit', 'Scikit-learn'],
     github: 'https://github.com/kenzyi2024/wildfire-evac-app',
     live: 'https://wildfire-evac-app.streamlit.app/',
+  },
+  {
+    title: 'Study Buddy Steve',
+    role: 'Full-Stack · AI · Cloud',
+    icon: CalendarClock,
+    preview: 'studybuddy',
+    desc: 'A full-stack study platform (React, Node.js, Python FastAPI microservices) with an AI document-parsing pipeline (OCR + LLMs) that auto-extracts class schedules from uploaded syllabi. Independently scalable services on Vercel + Google Cloud Run with JWT auth and MongoDB Atlas.',
+    metrics: ['~90%+ extraction accuracy', 'Microservices'],
+    tags: ['React', 'FastAPI', 'Google Cloud Run'],
+    github: 'https://github.com/kenzyi2024/StudyBuddySteve',
+  },
+  {
+    title: 'Eye Got You',
+    role: 'Mobile · React Native',
+    icon: Pill,
+    preview: 'eyegotyou',
+    desc: 'A cross-platform mobile app (React Native, Expo, TypeScript) that manages complex multi-medication regimens through a clinical rules engine, with on-device camera text recognition (MLKit) and barcode scanning in an accessible, dark-mode-first UI.',
+    metrics: ['iOS + Android', 'On-device OCR'],
+    tags: ['React Native', 'Expo', 'TypeScript'],
+    github: 'https://github.com/kenzyi2024/Eye-got-you',
   },
 ];
 
@@ -418,6 +438,66 @@ const ProjectPreview = ({ kind }) => {
           ))}
           <line x1="16" y1="168" x2="304" y2="168" stroke="#2E4035" strokeOpacity="0.25" strokeWidth="1.5" />
           <text x="16" y="190" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.6">Socratic seminar · Smart Recaps · React + MongoDB</text>
+        </svg>
+      </BrowserFrame>
+    );
+  }
+  if (kind === 'studybuddy') {
+    return (
+      <BrowserFrame url="Study Buddy Steve · React + FastAPI">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#F9F4EB' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Study Buddy Steve schedule-extraction preview">
+          {/* left: syllabus document */}
+          <rect x="16" y="18" width="108" height="150" rx="6" fill="#fff" stroke="#2E4035" strokeOpacity="0.15" />
+          <text x="26" y="34" fontFamily="monospace" fontSize="7" fill="#2E4035" opacity="0.5">SYLLABUS.pdf</text>
+          {[44, 56, 80, 92, 104, 116, 128, 140].map((y, i) => (
+            <rect key={i} x="26" y={y} width={i % 3 === 0 ? 88 : 66} height="4" rx="2" fill="#2E4035" opacity="0.18" />
+          ))}
+          {/* OCR highlight over the schedule line */}
+          <rect x="22" y="64" width="96" height="12" rx="3" fill="#C19A6B" opacity="0.2" />
+          <rect x="22" y="64" width="96" height="12" rx="3" fill="none" stroke="#6E5026" strokeWidth="1.3" />
+          {/* arrow */}
+          <path d="M128 96 h42" stroke="#6E5026" strokeWidth="2" fill="none" />
+          <path d="M168 90 l8 6 -8 6" stroke="#6E5026" strokeWidth="2" fill="none" />
+          {/* right: extracted schedule */}
+          <rect x="188" y="18" width="116" height="150" rx="6" fill="#fff" stroke="#2E4035" strokeOpacity="0.15" />
+          <text x="198" y="34" fontFamily="monospace" fontSize="7" fill="#6E5026">EXTRACTED SCHEDULE</text>
+          {[44, 70, 96, 122].map((y, i) => (
+            <g key={i}>
+              <rect x="198" y={y} width="28" height="18" rx="4" fill="#2E4035" />
+              <text x="212" y={y + 12} textAnchor="middle" fontFamily="monospace" fontSize="6.5" fill="#F9F4EB">{['9A', '11A', '1P', '3P'][i]}</text>
+              <rect x="232" y={y + 3} width="62" height="4" rx="2" fill="#2E4035" opacity="0.7" />
+              <rect x="232" y={y + 11} width="40" height="3" rx="1.5" fill="#C19A6B" />
+            </g>
+          ))}
+          <text x="16" y="188" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.6">Syllabus → schedule · OCR + LLM · ~90%+ accuracy</text>
+        </svg>
+      </BrowserFrame>
+    );
+  }
+  if (kind === 'eyegotyou') {
+    return (
+      <BrowserFrame url="React Native · iOS & Android">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#F3E5D0' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Eye Got You medication app preview">
+          <text x="16" y="30" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.6">Multi-med reminders</text>
+          <text x="16" y="44" fontFamily="monospace" fontSize="8" fill="#6E5026">clinical rules engine</text>
+          <text x="224" y="94" fontFamily="monospace" fontSize="7" fill="#2E4035" opacity="0.6">MLKit OCR</text>
+          <text x="224" y="108" fontFamily="monospace" fontSize="7" fill="#2E4035" opacity="0.6">barcode scan</text>
+          {/* phone */}
+          <rect x="108" y="8" width="104" height="188" rx="18" fill="#151B17" />
+          <rect x="150" y="14" width="20" height="4" rx="2" fill="#3a453c" />
+          <rect x="114" y="24" width="92" height="164" rx="8" fill="#0f1411" />
+          <text x="124" y="44" fontFamily="monospace" fontSize="8" fill="#EFE6D6">Today’s meds</text>
+          {[52, 90, 128].map((y, i) => (
+            <g key={i}>
+              <rect x="122" y={y} width="76" height="30" rx="6" fill="#1F2621" />
+              <circle cx="135" cy={y + 15} r="6" fill="#C19A6B" />
+              <rect x="147" y={y + 8} width="34" height="4" rx="2" fill="#EFE6D6" opacity="0.85" />
+              <rect x="147" y={y + 17} width="22" height="3" rx="1.5" fill="#C19A6B" />
+              {i < 2 && <path d={`M185 ${y + 14} l3 4 7 -9`} stroke="#7fd18a" strokeWidth="2" fill="none" />}
+            </g>
+          ))}
+          <rect x="122" y="164" width="76" height="18" rx="9" fill="#C19A6B" />
+          <text x="160" y="176" textAnchor="middle" fontFamily="monospace" fontSize="7" fill="#1c130a">Scan bottle</text>
         </svg>
       </BrowserFrame>
     );
