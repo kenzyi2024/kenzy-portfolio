@@ -348,7 +348,7 @@ const Blobs = () => {
    SHARED
    ============================================================ */
 const Heading = ({ children, light, align = 'text-center', kicker }) => (
-  <div className={`mb-14 ${align}`}>
+  <div className={`mb-10 md:mb-14 ${align}`}>
     {kicker && (
       <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
         className="font-mono text-xs tracking-[0.3em] uppercase mb-3"
@@ -455,6 +455,9 @@ const ProjectPreview = ({ kind }) => {
           {/* OCR highlight over the schedule line */}
           <rect x="22" y="64" width="96" height="12" rx="3" fill="#C19A6B" opacity="0.2" />
           <rect x="22" y="64" width="96" height="12" rx="3" fill="none" stroke="#6E5026" strokeWidth="1.3" />
+          {/* animated OCR scan sweep */}
+          <motion.rect x="16" width="108" height="3" rx="1.5" fill="#C19A6B" opacity="0.6"
+            animate={{ y: [22, 162, 22] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'linear' }} />
           {/* arrow */}
           <path d="M128 96 h42" stroke="#6E5026" strokeWidth="2" fill="none" />
           <path d="M168 90 l8 6 -8 6" stroke="#6E5026" strokeWidth="2" fill="none" />
@@ -466,7 +469,8 @@ const ProjectPreview = ({ kind }) => {
               <rect x="198" y={y} width="28" height="18" rx="4" fill="#2E4035" />
               <text x="212" y={y + 12} textAnchor="middle" fontFamily="monospace" fontSize="6.5" fill="#F9F4EB">{['9A', '11A', '1P', '3P'][i]}</text>
               <rect x="232" y={y + 3} width="62" height="4" rx="2" fill="#2E4035" opacity="0.7" />
-              <rect x="232" y={y + 11} width="40" height="3" rx="1.5" fill="#C19A6B" />
+              <motion.rect x="232" y={y + 11} width="40" height="3" rx="1.5" fill="#C19A6B"
+                animate={{ opacity: [0.45, 1, 0.45] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.35 }} />
             </g>
           ))}
           <text x="16" y="188" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.6">Syllabus → schedule · OCR + LLM · ~90%+ accuracy</text>
@@ -478,6 +482,14 @@ const ProjectPreview = ({ kind }) => {
     return (
       <BrowserFrame url="React Native · iOS & Android">
         <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#F3E5D0' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Eye Got You medication app preview">
+          <defs>
+            <radialGradient id="egyGlow" cx="50%" cy="44%" r="55%">
+              <stop offset="0%" stopColor="#C19A6B" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#C19A6B" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <motion.rect width="320" height="200" fill="url(#egyGlow)"
+            animate={{ opacity: [0.7, 1, 0.7] }} transition={{ duration: 3, repeat: Infinity }} />
           <text x="16" y="30" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.6">Multi-med reminders</text>
           <text x="16" y="44" fontFamily="monospace" fontSize="8" fill="#6E5026">clinical rules engine</text>
           <text x="224" y="94" fontFamily="monospace" fontSize="7" fill="#2E4035" opacity="0.6">MLKit OCR</text>
@@ -496,7 +508,12 @@ const ProjectPreview = ({ kind }) => {
               {i < 2 && <path d={`M185 ${y + 14} l3 4 7 -9`} stroke="#7fd18a" strokeWidth="2" fill="none" />}
             </g>
           ))}
-          <rect x="122" y="164" width="76" height="18" rx="9" fill="#C19A6B" />
+          {/* pulsing "dose due" ring on the current med */}
+          <motion.circle cx="135" cy="143" r="6" fill="none" stroke="#C19A6B" strokeWidth="2"
+            animate={{ r: [6, 13], opacity: [0.8, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }} />
+          {/* scan button with a subtle pulse */}
+          <motion.rect x="122" y="164" width="76" height="18" rx="9" fill="#C19A6B"
+            animate={{ opacity: [0.82, 1, 0.82] }} transition={{ duration: 2, repeat: Infinity }} />
           <text x="160" y="176" textAnchor="middle" fontFamily="monospace" fontSize="7" fill="#1c130a">Scan bottle</text>
         </svg>
       </BrowserFrame>
@@ -776,7 +793,7 @@ export default function App() {
                 <motion.a key={label} href={href} onClick={() => setMenuOpen(false)}
                   initial={{ x: -60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -60, opacity: 0 }}
                   transition={{ delay: 0.15 + i * 0.07 }}
-                  className="font-serif text-5xl md:text-8xl text-stroke-light hover:pl-6 md:hover:pl-12 transition-all duration-300">
+                  className="font-serif text-4xl sm:text-5xl md:text-8xl text-stroke-light hover:pl-6 md:hover:pl-12 transition-all duration-300">
                   {label}
                 </motion.a>
               ))}
@@ -803,7 +820,7 @@ export default function App() {
             Software Engineer · CS @ George Mason &apos;28
           </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}
-            className="font-serif text-6xl md:text-8xl lg:text-9xl text-[var(--on-panel)] leading-[0.95] mb-5">
+            className="font-serif text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-[var(--on-panel)] leading-[0.95] mb-5">
             <span className="italic block md:inline md:mr-5">Kenzy</span>
             <span className="block md:inline">Ibrahim</span>
           </motion.h1>
@@ -850,7 +867,7 @@ export default function App() {
       </section>
 
       {/* ABOUT */}
-      <section id="about" className="relative z-10 py-24 px-6 md:px-20" style={{ background: 'var(--bg)' }}>
+      <section id="about" className="relative z-10 py-16 md:py-24 px-6 md:px-20" style={{ background: 'var(--bg)' }}>
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-14 items-center">
           <motion.div initial={{ opacity: 0, scale: 0.92 }} whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }} className="lg:col-span-2">
@@ -880,7 +897,7 @@ export default function App() {
       </section>
 
       {/* EXPERIENCE */}
-      <section id="experience" className="relative z-10 py-24 px-6 md:px-20" style={{ background: 'var(--bg-alt)' }}>
+      <section id="experience" className="relative z-10 py-16 md:py-24 px-6 md:px-20" style={{ background: 'var(--bg-alt)' }}>
         <Heading kicker="/ experience">Where I&apos;ve worked</Heading>
         <div className="max-w-4xl mx-auto">
           <ol className="relative border-l-2 ml-2" style={{ borderColor: 'var(--line)' }}>
@@ -915,7 +932,7 @@ export default function App() {
       </section>
 
       {/* PROJECTS */}
-      <section id="projects" className="relative z-10 py-24 px-6 md:px-20" style={{ background: 'var(--panel)' }}>
+      <section id="projects" className="relative z-10 py-16 md:py-24 px-6 md:px-20" style={{ background: 'var(--panel)' }}>
         <Heading light kicker="/ projects">Things I&apos;ve built</Heading>
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {PROJECTS.map((p, i) => (
@@ -975,7 +992,7 @@ export default function App() {
       </section>
 
       {/* SKILLS */}
-      <section id="skills" className="relative z-10 py-24 px-6 md:px-20" style={{ background: 'var(--bg)' }}>
+      <section id="skills" className="relative z-10 py-16 md:py-24 px-6 md:px-20" style={{ background: 'var(--bg)' }}>
         <Heading kicker="/ skills">The toolkit</Heading>
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
           {SKILLS.map((cat, ci) => (
@@ -1007,7 +1024,7 @@ export default function App() {
       </section>
 
       {/* TERMINAL */}
-      <section id="terminal" className="relative z-10 py-24 px-6" style={{ background: 'var(--bg-alt)' }}>
+      <section id="terminal" className="relative z-10 py-16 md:py-24 px-6" style={{ background: 'var(--bg-alt)' }}>
         <Heading kicker="/ interactive">
           <span className="inline-flex items-center gap-3"><TerminalIcon size={38} style={{ color: 'var(--accent-text)' }} aria-hidden="true" /> Poke around</span>
         </Heading>
@@ -1018,7 +1035,7 @@ export default function App() {
       </section>
 
       {/* CONTACT */}
-      <footer id="contact" className="relative z-10 pt-24 pb-12 px-6 flex flex-col items-center text-center overflow-hidden"
+      <footer id="contact" className="relative z-10 pt-16 md:pt-24 pb-12 px-6 flex flex-col items-center text-center overflow-hidden"
         style={{ background: 'var(--panel)' }}>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] md:w-[60rem] opacity-[0.04] pointer-events-none">
           <img src={logoImg} alt="" className="w-full h-auto object-contain" />
@@ -1026,7 +1043,7 @@ export default function App() {
         <div className="relative z-10 flex flex-col items-center w-full">
           <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
             className="font-mono text-xs tracking-[0.3em] uppercase mb-4" style={{ color: 'var(--accent-ondark)' }}>/ contact</motion.p>
-          <h2 className="font-serif text-5xl md:text-8xl text-[var(--on-panel)] mb-4">Let&apos;s build something.</h2>
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-8xl text-[var(--on-panel)] mb-4">Let&apos;s build something.</h2>
           <p className="font-sans text-[var(--on-panel)]/60 max-w-md mb-10">Open to software engineering internships. The inbox is always on.</p>
 
           <div className="w-full mb-10"><ContactForm /></div>
