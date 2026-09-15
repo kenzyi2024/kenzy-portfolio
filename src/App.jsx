@@ -5,7 +5,7 @@ import {
 } from 'framer-motion';
 import {
   Menu, X, Github, Linkedin, Mail, ArrowUpRight, ArrowDown, Sun, Moon,
-  Flame, ScanEye, BookOpen, Terminal as TerminalIcon, ExternalLink, Sparkles,
+  Flame, ScanEye, BookOpen, Terminal as TerminalIcon, ExternalLink,
   Award, Cpu, Code2, Braces, Send, Loader2, CheckCircle2, AlertCircle, CalendarClock, Pill
 } from 'lucide-react';
 
@@ -163,13 +163,13 @@ const PROJECTS = [
   },
   {
     title: 'BookNook',
-    role: 'Full-Stack Engineer',
+    role: 'Full-Stack · REST',
     icon: BookOpen,
     preview: 'booknook',
-    desc: 'A full-stack personal library that powers context-aware text analysis, guided Socratic seminars, and Smart Recaps across a catalog of 10,000+ books from the BookLib API. Built with a state-driven cache to eliminate redundant calls.',
-    metrics: ['10,000+ books', 'State-driven cache'],
+    desc: 'A full-stack web app (React, MongoDB, Google Cloud) delivering context-aware text analysis and search over a 10,000+ book catalog via REST APIs, with a state-driven caching layer that cut redundant API calls ~60%.',
+    metrics: ['10,000+ books', '~60% fewer API calls'],
     tags: ['React', 'MongoDB', 'Google Cloud'],
-    github: 'https://github.com/kenzyi2024/Book-Tracker',
+    github: 'https://github.com/kenzyi2024/BookNook',
     live: 'https://book-tracker-ivory.vercel.app/',
   },
   {
@@ -1054,10 +1054,9 @@ export default function App() {
               <Github size={18} /> kenzyi2024
             </MagneticButton>
           </div>
-          <div className="w-full max-w-2xl flex flex-col sm:flex-row justify-between items-center gap-3 text-[var(--on-panel)]/70 text-xs font-mono tracking-widest uppercase border-t pt-8"
+          <div className="w-full max-w-2xl flex justify-center items-center text-[var(--on-panel)]/70 text-xs font-mono tracking-widest uppercase border-t pt-8"
             style={{ borderColor: 'rgba(255,255,255,.1)' }}>
             <span>© 2026 Kenzy Ibrahim</span>
-            <span className="inline-flex items-center gap-2"><Sparkles size={12} /> Built with React + Framer Motion</span>
           </div>
         </div>
       </footer>
