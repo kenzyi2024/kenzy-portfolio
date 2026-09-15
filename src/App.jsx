@@ -473,9 +473,12 @@ const ProjectPreview = ({ kind }) => {
             <motion.path d="M130 24 l2.5 6 l6 2.5 l-6 2.5 l-2.5 6 l-2.5 -6 l-6 -2.5 l6 -2.5 Z" fill="#C19A6B"
               animate={{ scale: [1, 1.25, 1], opacity: [0.85, 1, 0.85] }} transition={{ duration: 2, repeat: Infinity }}
               style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
-            <circle cx="156" cy="31" r="3" fill="#2E4035" />
-            <circle cx="168" cy="31" r="3" fill="#2E4035" />
-            <circle cx="180" cy="31" r="3" fill="#C19A6B" />
+            <motion.circle cx="156" cy="31" r="3" fill="#2E4035"
+              animate={{ opacity: [0, 1, 1, 1, 0, 0] }} transition={{ duration: 1.8, repeat: Infinity, times: [0, 0.12, 0.37, 0.62, 0.75, 1] }} />
+            <motion.circle cx="168" cy="31" r="3" fill="#2E4035"
+              animate={{ opacity: [0, 0, 1, 1, 0, 0] }} transition={{ duration: 1.8, repeat: Infinity, times: [0, 0.12, 0.37, 0.62, 0.75, 1] }} />
+            <motion.circle cx="180" cy="31" r="3" fill="#C19A6B"
+              animate={{ opacity: [0, 0, 0, 1, 0, 0] }} transition={{ duration: 1.8, repeat: Infinity, times: [0, 0.12, 0.37, 0.62, 0.75, 1] }} />
           </motion.g>
           <text x="160" y="190" textAnchor="middle" fontFamily="monospace" fontSize="8" fill="#B8B8AA">recaps · analysis · Socratic seminars</text>
         </svg>
