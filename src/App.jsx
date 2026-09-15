@@ -427,24 +427,46 @@ const ProjectPreview = ({ kind }) => {
     );
   }
   if (kind === 'booknook') {
-    const spines = [['#2E4035', 78], ['#C19A6B', 96], ['#8A9A8E', 66], ['#3c5245', 88], ['#B8956A', 72], ['#546b5a', 92], ['#C19A6B', 60], ['#2E4035', 84], ['#9AA79B', 76]];
     return (
-      <BrowserFrame url="book-tracker-ivory.vercel.app">
-        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#F9F4EB' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="BookNook library app preview">
-          <rect x="16" y="16" width="200" height="16" rx="8" fill="#fff" stroke="#2E4035" strokeOpacity="0.15" />
-          <circle cx="26" cy="24" r="3.5" fill="none" stroke="#C19A6B" strokeWidth="1.5" /><line x1="28.5" y1="26.5" x2="31" y2="29" stroke="#C19A6B" strokeWidth="1.5" />
-          <text x="40" y="27" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.5">search 10,000+ books…</text>
-          <rect x="228" y="16" width="76" height="16" rx="8" fill="#2E4035" /><text x="243" y="27" fontFamily="monospace" fontSize="8" fill="#F9F4EB">+ recap</text>
-          {spines.map(([c, h], i) => (
-            <motion.g key={i} animate={{ y: [0, -3, 0] }}
-              transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.18, ease: 'easeInOut' }}>
-              <rect x={20 + i * 33} y={168 - h} width="26" height={h} rx="2" fill={c} />
-              <rect x={20 + i * 33} y={168 - h + 6} width="26" height="3" fill="#000" opacity="0.12" />
-              <rect x={20 + i * 33} y={162} width="26" height="4" fill="#000" opacity="0.15" />
-            </motion.g>
+      <BrowserFrame url="booknook · reading companion">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#F9F4EB' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="BookNook — an open book with an AI literary companion">
+          <defs>
+            <radialGradient id="bnGlow" cx="50%" cy="60%" r="60%">
+              <stop offset="0%" stopColor="#C19A6B" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="#C19A6B" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <rect width="320" height="200" fill="url(#bnGlow)" />
+          {/* open book — green cover then cream pages */}
+          <path d="M160 82 L58 98 L58 158 L160 148 Z" fill="#2E4035" />
+          <path d="M160 82 L262 98 L262 158 L160 148 Z" fill="#2E4035" />
+          <path d="M160 88 L70 102 L70 152 L160 144 Z" fill="#FBF7EF" stroke="#2E4035" strokeOpacity="0.15" />
+          <path d="M160 88 L250 102 L250 152 L160 144 Z" fill="#FBF7EF" stroke="#2E4035" strokeOpacity="0.15" />
+          <rect x="157" y="86" width="6" height="60" rx="2" fill="#2E4035" />
+          {/* page text */}
+          {[106, 116, 126, 136].map((y, i) => (
+            <rect key={'l' + i} x="80" y={y} width={62 - i * 3} height="3" rx="1.5" fill="#2E4035" opacity="0.28" />
           ))}
-          <line x1="16" y1="168" x2="304" y2="168" stroke="#2E4035" strokeOpacity="0.25" strokeWidth="1.5" />
-          <text x="16" y="190" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.6">Socratic seminar · Smart Recaps · React + MongoDB</text>
+          {[106, 126, 136].map((y, i) => (
+            <rect key={'r' + i} x="176" y={y} width={62 - i * 3} height="3" rx="1.5" fill="#2E4035" opacity="0.28" />
+          ))}
+          {/* highlighted "analysis" line pulses */}
+          <motion.rect x="176" y="116" width="56" height="4" rx="2" fill="#C19A6B"
+            animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2.2, repeat: Infinity }} />
+          {/* gold bookmark ribbon */}
+          <path d="M150 82 L157 82 L157 156 L153.5 150 L150 156 Z" fill="#C19A6B" />
+          {/* floating AI companion bubble */}
+          <motion.g animate={{ y: [0, -5, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
+            <rect x="112" y="14" width="96" height="34" rx="10" fill="#2E4035" />
+            <path d="M150 46 l9 10 l7 -10 Z" fill="#2E4035" />
+            <motion.path d="M132 24 l2.5 6 l6 2.5 l-6 2.5 l-2.5 6 l-2.5 -6 l-6 -2.5 l6 -2.5 Z" fill="#D8B482"
+              animate={{ scale: [1, 1.25, 1], opacity: [0.8, 1, 0.8] }} transition={{ duration: 2, repeat: Infinity }}
+              style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
+            <circle cx="158" cy="31" r="3" fill="#F3E5D0" />
+            <circle cx="170" cy="31" r="3" fill="#F3E5D0" />
+            <circle cx="182" cy="31" r="3" fill="#C19A6B" />
+          </motion.g>
+          <text x="160" y="188" textAnchor="middle" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.6">recaps · analysis · Socratic seminars</text>
         </svg>
       </BrowserFrame>
     );
@@ -455,36 +477,36 @@ const ProjectPreview = ({ kind }) => {
     return (
       <BrowserFrame url="studybuddysteve.app">
         <svg viewBox="0 0 320 200" className="w-full h-full" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Study Buddy Steve — retro 8-bit study buddy that reads your syllabus">
-          <rect width="320" height="200" fill="#241338" />
+          <rect width="320" height="200" fill="#1c2620" />
           {/* CRT scanlines */}
           {[...Array(25)].map((_, i) => <rect key={i} x="0" y={i * 8} width="320" height="3" fill="#000" opacity="0.08" />)}
           {/* neon frame */}
-          <rect x="7" y="7" width="306" height="186" rx="6" fill="none" stroke="#ff3fa4" strokeWidth="2" opacity="0.7" />
+          <rect x="7" y="7" width="306" height="186" rx="6" fill="none" stroke="#C19A6B" strokeWidth="2" opacity="0.7" />
           {/* headline */}
-          <text x="20" y="52" fontFamily="monospace" fontWeight="700" fontSize="16" fill="#F3E9D2" letterSpacing="1">STOP RETYPING</text>
-          <text x="20" y="72" fontFamily="monospace" fontWeight="700" fontSize="16" fill="#3fd0ff" letterSpacing="1">YOUR SYLLABUS</text>
+          <text x="20" y="52" fontFamily="monospace" fontWeight="700" fontSize="16" fill="#F3E5D0" letterSpacing="1">STOP RETYPING</text>
+          <text x="20" y="72" fontFamily="monospace" fontWeight="700" fontSize="16" fill="#D8B482" letterSpacing="1">YOUR SYLLABUS</text>
           {/* loading bar */}
           <rect x="20" y="150" width="150" height="15" rx="3" fill="#000" opacity="0.4" />
-          <rect x="20" y="150" width="150" height="15" rx="3" fill="none" stroke="#ffb020" strokeWidth="1.5" />
-          <motion.rect x="22" y="152" height="11" rx="2" fill="#b6ff3f"
+          <rect x="20" y="150" width="150" height="15" rx="3" fill="none" stroke="#C19A6B" strokeWidth="1.5" />
+          <motion.rect x="22" y="152" height="11" rx="2" fill="#B8B8AA"
             animate={{ width: [0, 146, 146, 0] }} transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', times: [0, 0.6, 0.85, 1] }} />
-          <text x="20" y="182" fontFamily="monospace" fontSize="8" fill="#b6ff3f">▸ LOADING SEMESTER.EXE</text>
+          <text x="20" y="182" fontFamily="monospace" fontSize="8" fill="#D8B482">▸ LOADING SEMESTER.EXE</text>
           {/* Steve the robot */}
           <motion.g animate={{ y: [0, -4, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
-            <rect x="223" y="70" width="3" height="12" fill="#2E5E8C" /><circle cx="224.5" cy="68" r="3.5" fill="#ff3fa4" />
-            <rect x="256" y="70" width="3" height="12" fill="#2E5E8C" /><circle cx="257.5" cy="68" r="3.5" fill="#b6ff3f" />
-            <rect x="205" y="82" width="72" height="50" rx="9" fill="#5AA9E6" stroke="#2E5E8C" strokeWidth="2" />
-            <rect x="214" y="92" width="54" height="32" rx="4" fill="#0d1b2a" />
-            <motion.rect x="224" y="101" width="9" height="13" rx="2" fill="#7CF5D0" style={{ transformBox: 'fill-box', transformOrigin: 'center' }} animate={blink} transition={blinkT} />
-            <motion.rect x="249" y="101" width="9" height="13" rx="2" fill="#7CF5D0" style={{ transformBox: 'fill-box', transformOrigin: 'center' }} animate={blink} transition={blinkT} />
-            <rect x="200" y="138" width="10" height="24" rx="4" fill="#5AA9E6" stroke="#2E5E8C" strokeWidth="2" />
-            <rect x="272" y="138" width="10" height="24" rx="4" fill="#5AA9E6" stroke="#2E5E8C" strokeWidth="2" />
-            <rect x="214" y="134" width="54" height="40" rx="6" fill="#5AA9E6" stroke="#2E5E8C" strokeWidth="2" />
-            <rect x="214" y="147" width="54" height="5" fill="#ffb020" />
-            <rect x="236" y="145" width="10" height="9" rx="2" fill="#ffb020" />
-            <circle cx="241" cy="165" r="4" fill="#0d1b2a" />
-            <rect x="224" y="174" width="12" height="11" rx="3" fill="#2E5E8C" />
-            <rect x="246" y="174" width="12" height="11" rx="3" fill="#2E5E8C" />
+            <rect x="223" y="70" width="3" height="12" fill="#2E4035" /><circle cx="224.5" cy="68" r="3.5" fill="#C19A6B" />
+            <rect x="256" y="70" width="3" height="12" fill="#2E4035" /><circle cx="257.5" cy="68" r="3.5" fill="#B8B8AA" />
+            <rect x="205" y="82" width="72" height="50" rx="9" fill="#B8B8AA" stroke="#2E4035" strokeWidth="2" />
+            <rect x="214" y="92" width="54" height="32" rx="4" fill="#141a16" />
+            <motion.rect x="224" y="101" width="9" height="13" rx="2" fill="#D8B482" style={{ transformBox: 'fill-box', transformOrigin: 'center' }} animate={blink} transition={blinkT} />
+            <motion.rect x="249" y="101" width="9" height="13" rx="2" fill="#D8B482" style={{ transformBox: 'fill-box', transformOrigin: 'center' }} animate={blink} transition={blinkT} />
+            <rect x="200" y="138" width="10" height="24" rx="4" fill="#B8B8AA" stroke="#2E4035" strokeWidth="2" />
+            <rect x="272" y="138" width="10" height="24" rx="4" fill="#B8B8AA" stroke="#2E4035" strokeWidth="2" />
+            <rect x="214" y="134" width="54" height="40" rx="6" fill="#B8B8AA" stroke="#2E4035" strokeWidth="2" />
+            <rect x="214" y="147" width="54" height="5" fill="#C19A6B" />
+            <rect x="236" y="145" width="10" height="9" rx="2" fill="#C19A6B" />
+            <circle cx="241" cy="165" r="4" fill="#141a16" />
+            <rect x="224" y="174" width="12" height="11" rx="3" fill="#2E4035" />
+            <rect x="246" y="174" width="12" height="11" rx="3" fill="#2E4035" />
           </motion.g>
         </svg>
       </BrowserFrame>
@@ -496,32 +518,32 @@ const ProjectPreview = ({ kind }) => {
         <svg viewBox="0 0 320 200" className="w-full h-full" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Eye Got You — medication reminders, an eye keeping watch over your doses">
           <defs>
             <radialGradient id="egyBg" cx="50%" cy="46%" r="72%">
-              <stop offset="0%" stopColor="#123a33" />
-              <stop offset="100%" stopColor="#0a1613" />
+              <stop offset="0%" stopColor="#2E4035" />
+              <stop offset="100%" stopColor="#141a16" />
             </radialGradient>
           </defs>
           <rect width="320" height="200" fill="url(#egyBg)" />
-          {/* pulsing scan rings — always watching */}
+          {/* pulsing scan rings — an eye keeping watch */}
           {[40, 58, 76].map((r, i) => (
-            <motion.circle key={i} cx="160" cy="100" r={r} fill="none" stroke="#6FD0C0" strokeWidth="1"
+            <motion.circle key={i} cx="160" cy="100" r={r} fill="none" stroke="#C19A6B" strokeWidth="1"
               animate={{ opacity: [0.32 - i * 0.07, 0.04, 0.32 - i * 0.07] }}
               transition={{ duration: 3, repeat: Infinity, delay: i * 0.3 }} />
           ))}
           {/* eye */}
-          <path d="M92 100 Q 160 50 228 100 Q 160 150 92 100 Z" fill="#0a1613" stroke="#EAF3EF" strokeWidth="2.5" />
-          <circle cx="160" cy="100" r="27" fill="#0f2b26" stroke="#6FD0C0" strokeWidth="2" />
+          <path d="M92 100 Q 160 50 228 100 Q 160 150 92 100 Z" fill="#0a1613" stroke="#F3E5D0" strokeWidth="2.5" />
+          <circle cx="160" cy="100" r="27" fill="#1c2620" stroke="#C19A6B" strokeWidth="2" />
           <motion.circle cx="160" cy="100" r="27" fill="none" stroke="#D8B482" strokeWidth="2"
             animate={{ r: [27, 32], opacity: [0.85, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut' }} />
-          <motion.circle cx="160" cy="100" fill="#EAF3EF" r="11"
+          <motion.circle cx="160" cy="100" fill="#F3E5D0" r="11"
             animate={{ r: [11, 8, 11] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }} />
           <circle cx="160" cy="100" r="6" fill="#0a1613" />
-          <circle cx="166" cy="94" r="2.5" fill="#EAF3EF" />
+          <circle cx="166" cy="94" r="2.5" fill="#F3E5D0" />
           {/* dropper + falling drop */}
-          <rect x="150" y="14" width="20" height="8" rx="2" fill="#6FD0C0" />
-          <rect x="156" y="20" width="8" height="14" rx="2" fill="#8fe0d2" />
-          <motion.path d="M160 38 c 4.5 6 4.5 9.5 0 12.5 c -4.5 -3 -4.5 -6.5 0 -12.5 Z" fill="#6FD0C0"
+          <rect x="150" y="14" width="20" height="8" rx="2" fill="#C19A6B" />
+          <rect x="156" y="20" width="8" height="14" rx="2" fill="#D8B482" />
+          <motion.path d="M160 38 c 4.5 6 4.5 9.5 0 12.5 c -4.5 -3 -4.5 -6.5 0 -12.5 Z" fill="#C19A6B"
             animate={{ y: [0, 46, 46], opacity: [1, 1, 0] }} transition={{ duration: 2.4, repeat: Infinity, times: [0, 0.72, 1], ease: 'easeIn' }} />
-          <text x="160" y="182" textAnchor="middle" fontFamily="monospace" fontSize="9" fill="#9fc7bd" letterSpacing="1">every dose, on time.</text>
+          <text x="160" y="182" textAnchor="middle" fontFamily="monospace" fontSize="9" fill="#B8B8AA" letterSpacing="1">every dose, on time.</text>
         </svg>
       </BrowserFrame>
     );
@@ -952,15 +974,12 @@ export default function App() {
       {/* PROJECTS */}
       <section id="projects" className="relative z-10 py-16 md:py-24 px-6 md:px-20" style={{ background: 'var(--panel)' }}>
         <Heading light kicker="/ projects">Things I&apos;ve built</Heading>
-        <p className="text-center font-mono text-[10px] tracking-[0.3em] uppercase -mt-6 mb-8 text-[var(--on-panel)]/50">
-          Scroll to explore →
-        </p>
-        <div className="flex gap-6 overflow-x-auto snap-x snap-mandatory pt-2 pb-6 px-6 md:px-20 -mx-6 md:-mx-20 no-scrollbar">
+        <div className="max-w-6xl mx-auto flex flex-wrap justify-center gap-6">
           {PROJECTS.map((p, i) => (
             <motion.article key={p.title} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }} transition={{ delay: i * 0.08 }}
               whileHover={{ y: -8 }} data-cursor
-              className="group shrink-0 w-[85vw] sm:w-[360px] snap-center rounded-3xl overflow-hidden flex flex-col shadow-xl border"
+              className="group w-full sm:w-[340px] rounded-3xl overflow-hidden flex flex-col shadow-xl border"
               style={{ background: 'var(--card)', borderColor: 'var(--line)' }}>
               <div className="relative">
                 <ProjectPreview kind={p.preview} />
