@@ -406,7 +406,7 @@ const ProjectPreview = ({ kind }) => {
   if (kind === 'falcon') {
     return (
       <BrowserFrame url="verizon · internal — project-falcon">
-        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#0e1310' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Computer-vision detection preview">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#37493f' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Computer-vision detection preview">
           {[...Array(9)].map((_, i) => <line key={'v' + i} x1={i * 40} y1="0" x2={i * 40} y2="200" stroke="#2E4035" strokeWidth="0.5" opacity="0.5" />)}
           {[...Array(6)].map((_, i) => <line key={'h' + i} x1="0" y1={i * 40} x2="320" y2={i * 40} stroke="#2E4035" strokeWidth="0.5" opacity="0.5" />)}
           <g stroke="var(--accent)" strokeWidth="1.5" fill="none">
@@ -433,14 +433,14 @@ const ProjectPreview = ({ kind }) => {
     ];
     return (
       <BrowserFrame url="booknook · reading companion">
-        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#1c2620' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="BookNook — a cozy shelf with an AI reading companion">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#37493f' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="BookNook — a cozy shelf with an AI reading companion">
           <defs>
             <radialGradient id="bnGlow" cx="50%" cy="70%" r="62%">
               <stop offset="0%" stopColor="#C19A6B" stopOpacity="0.3" />
               <stop offset="100%" stopColor="#C19A6B" stopOpacity="0" />
             </radialGradient>
           </defs>
-          <rect width="320" height="200" fill="#1c2620" />
+          <rect width="320" height="200" fill="#37493f" />
           <motion.rect width="320" height="200" fill="url(#bnGlow)"
             animate={{ opacity: [0.75, 1, 0.75] }} transition={{ duration: 4, repeat: Infinity }} />
           {/* cozy shelf of books */}
@@ -481,7 +481,7 @@ const ProjectPreview = ({ kind }) => {
     return (
       <BrowserFrame url="studybuddysteve.app">
         <svg viewBox="0 0 320 200" className="w-full h-full" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Study Buddy Steve — retro 8-bit study buddy that reads your syllabus">
-          <rect width="320" height="200" fill="#1c2620" />
+          <rect width="320" height="200" fill="#37493f" />
           {/* CRT scanlines */}
           {[...Array(25)].map((_, i) => <rect key={i} x="0" y={i * 8} width="320" height="3" fill="#000" opacity="0.08" />)}
           {/* neon frame */}
@@ -522,8 +522,8 @@ const ProjectPreview = ({ kind }) => {
         <svg viewBox="0 0 320 200" className="w-full h-full" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Eye Got You — medication reminders, an eye keeping watch over your doses">
           <defs>
             <radialGradient id="egyBg" cx="50%" cy="46%" r="72%">
-              <stop offset="0%" stopColor="#2E4035" />
-              <stop offset="100%" stopColor="#141a16" />
+              <stop offset="0%" stopColor="#3a4f44" />
+              <stop offset="100%" stopColor="#37493f" />
             </radialGradient>
           </defs>
           <rect width="320" height="200" fill="url(#egyBg)" />
@@ -555,7 +555,7 @@ const ProjectPreview = ({ kind }) => {
   // wildfire
   return (
     <BrowserFrame url="wildfire-evac-app.streamlit.app">
-      <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#151B17' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Wildfire risk map preview">
+      <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#37493f' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Wildfire risk map preview">
         <defs>
           <radialGradient id="risk" cx="62%" cy="45%" r="55%">
             <stop offset="0%" stopColor="#C19A6B" stopOpacity="0.9" />
