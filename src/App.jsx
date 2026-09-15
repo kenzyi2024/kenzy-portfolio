@@ -427,46 +427,50 @@ const ProjectPreview = ({ kind }) => {
     );
   }
   if (kind === 'booknook') {
+    const shelf = [
+      ['#C19A6B', 86], ['#2E4035', 72], ['#8A9A8E', 96], ['#B8956A', 64], ['#3c5245', 90],
+      ['#F3E5D0', 76], ['#C19A6B', 100], ['#546b5a', 70], ['#B8B8AA', 84],
+    ];
     return (
       <BrowserFrame url="booknook · reading companion">
-        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#F9F4EB' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="BookNook — an open book with an AI literary companion">
+        <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#1c2620' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="BookNook — a cozy shelf with an AI reading companion">
           <defs>
-            <radialGradient id="bnGlow" cx="50%" cy="60%" r="60%">
-              <stop offset="0%" stopColor="#C19A6B" stopOpacity="0.18" />
+            <radialGradient id="bnGlow" cx="50%" cy="70%" r="62%">
+              <stop offset="0%" stopColor="#C19A6B" stopOpacity="0.3" />
               <stop offset="100%" stopColor="#C19A6B" stopOpacity="0" />
             </radialGradient>
           </defs>
-          <rect width="320" height="200" fill="url(#bnGlow)" />
-          {/* open book — green cover then cream pages */}
-          <path d="M160 82 L58 98 L58 158 L160 148 Z" fill="#2E4035" />
-          <path d="M160 82 L262 98 L262 158 L160 148 Z" fill="#2E4035" />
-          <path d="M160 88 L70 102 L70 152 L160 144 Z" fill="#FBF7EF" stroke="#2E4035" strokeOpacity="0.15" />
-          <path d="M160 88 L250 102 L250 152 L160 144 Z" fill="#FBF7EF" stroke="#2E4035" strokeOpacity="0.15" />
-          <rect x="157" y="86" width="6" height="60" rx="2" fill="#2E4035" />
-          {/* page text */}
-          {[106, 116, 126, 136].map((y, i) => (
-            <rect key={'l' + i} x="80" y={y} width={62 - i * 3} height="3" rx="1.5" fill="#2E4035" opacity="0.28" />
-          ))}
-          {[106, 126, 136].map((y, i) => (
-            <rect key={'r' + i} x="176" y={y} width={62 - i * 3} height="3" rx="1.5" fill="#2E4035" opacity="0.28" />
-          ))}
-          {/* highlighted "analysis" line pulses */}
-          <motion.rect x="176" y="116" width="56" height="4" rx="2" fill="#C19A6B"
-            animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2.2, repeat: Infinity }} />
-          {/* gold bookmark ribbon */}
-          <path d="M150 82 L157 82 L157 156 L153.5 150 L150 156 Z" fill="#C19A6B" />
+          <rect width="320" height="200" fill="#1c2620" />
+          <motion.rect width="320" height="200" fill="url(#bnGlow)"
+            animate={{ opacity: [0.75, 1, 0.75] }} transition={{ duration: 4, repeat: Infinity }} />
+          {/* cozy shelf of books */}
+          {shelf.map(([c, h], i) => {
+            const x = 46 + i * 26;
+            return (
+              <motion.g key={i} animate={{ y: [0, -2, 0] }}
+                transition={{ duration: 2.6, repeat: Infinity, delay: i * 0.16, ease: 'easeInOut' }}>
+                <rect x={x} y={150 - h} width="22" height={h} rx="3" fill={c} />
+                <rect x={x} y={150 - h} width="22" height="5" rx="2" fill="#fff" opacity="0.12" />
+                <rect x={x + 3} y={150 - h + 12} width="16" height="3" rx="1.5" fill="#D8B482" opacity="0.85" />
+              </motion.g>
+            );
+          })}
+          {/* wooden shelf */}
+          <rect x="28" y="163" width="264" height="6" fill="#000" opacity="0.28" />
+          <rect x="28" y="150" width="264" height="14" rx="3" fill="#6E5026" />
+          <rect x="28" y="150" width="264" height="3" rx="2" fill="#C19A6B" opacity="0.6" />
           {/* floating AI companion bubble */}
           <motion.g animate={{ y: [0, -5, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
-            <rect x="112" y="14" width="96" height="34" rx="10" fill="#2E4035" />
-            <path d="M150 46 l9 10 l7 -10 Z" fill="#2E4035" />
-            <motion.path d="M132 24 l2.5 6 l6 2.5 l-6 2.5 l-2.5 6 l-2.5 -6 l-6 -2.5 l6 -2.5 Z" fill="#D8B482"
-              animate={{ scale: [1, 1.25, 1], opacity: [0.8, 1, 0.8] }} transition={{ duration: 2, repeat: Infinity }}
+            <rect x="110" y="14" width="100" height="34" rx="10" fill="#F3E5D0" />
+            <path d="M150 46 l9 10 l7 -10 Z" fill="#F3E5D0" />
+            <motion.path d="M130 24 l2.5 6 l6 2.5 l-6 2.5 l-2.5 6 l-2.5 -6 l-6 -2.5 l6 -2.5 Z" fill="#C19A6B"
+              animate={{ scale: [1, 1.25, 1], opacity: [0.85, 1, 0.85] }} transition={{ duration: 2, repeat: Infinity }}
               style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
-            <circle cx="158" cy="31" r="3" fill="#F3E5D0" />
-            <circle cx="170" cy="31" r="3" fill="#F3E5D0" />
-            <circle cx="182" cy="31" r="3" fill="#C19A6B" />
+            <circle cx="156" cy="31" r="3" fill="#2E4035" />
+            <circle cx="168" cy="31" r="3" fill="#2E4035" />
+            <circle cx="180" cy="31" r="3" fill="#C19A6B" />
           </motion.g>
-          <text x="160" y="188" textAnchor="middle" fontFamily="monospace" fontSize="8" fill="#2E4035" opacity="0.6">recaps · analysis · Socratic seminars</text>
+          <text x="160" y="190" textAnchor="middle" fontFamily="monospace" fontSize="8" fill="#B8B8AA">recaps · analysis · Socratic seminars</text>
         </svg>
       </BrowserFrame>
     );
