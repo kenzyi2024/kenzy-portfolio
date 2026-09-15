@@ -759,17 +759,18 @@ export default function App() {
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-[65] px-6 md:px-10 py-5 flex justify-between items-center">
         <a href="#top" aria-label="Back to top" className="flex items-center">
-          <img src={logoImg} alt="Kenzy Ibrahim" className="h-8 md:h-10 w-auto object-contain" />
+          <img src={logoImg} alt="Kenzy Ibrahim" className="h-9 md:h-11 w-auto object-contain"
+            style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.35))' }} />
         </a>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button onClick={toggleTheme} aria-label="Toggle theme"
-            className="p-2.5 rounded-full border hover:scale-110 transition-transform mix-blend-difference text-white"
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full border hover:scale-110 transition-transform mix-blend-difference text-white"
             style={{ borderColor: 'rgba(255,255,255,.4)' }}>
             {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
           </button>
           <button onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-haspopup="dialog" aria-expanded={menuOpen}
-            className="p-2.5 rounded-full mix-blend-difference text-white hover:scale-110 transition-transform">
-            <Menu size={22} />
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full mix-blend-difference text-white hover:scale-110 transition-transform">
+            <Menu size={24} />
           </button>
         </div>
       </nav>
@@ -958,13 +959,13 @@ export default function App() {
                   <div className="flex gap-2 shrink-0 pt-1">
                     {p.github && (
                       <a href={p.github} target="_blank" rel="noreferrer" aria-label="GitHub repo"
-                        className="p-2 rounded-full border hover:scale-110 transition-transform"
-                        style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><Github size={16} /></a>
+                        className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full border hover:scale-110 transition-transform"
+                        style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><Github size={18} /></a>
                     )}
                     {p.live && (
                       <a href={p.live} target="_blank" rel="noreferrer" aria-label="Live demo"
-                        className="p-2 rounded-full border hover:scale-110 transition-transform"
-                        style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><ExternalLink size={16} /></a>
+                        className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full border hover:scale-110 transition-transform"
+                        style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><ExternalLink size={18} /></a>
                     )}
                     {p.proprietary && (
                       <span className="px-3 py-1.5 rounded-full font-mono text-[9px] tracking-wider uppercase self-center"
