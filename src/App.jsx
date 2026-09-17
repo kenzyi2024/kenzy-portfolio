@@ -1,92 +1,144 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  motion, AnimatePresence, useInView, useMotionValue, useSpring, useScroll, useTransform,
-  useReducedMotion
+  motion, AnimatePresence, useInView, useScroll, useTransform, useReducedMotion,
 } from 'framer-motion';
-import {
-  Menu, X, Github, Linkedin, Mail, ArrowUpRight, ArrowDown, Sun, Moon,
-  Flame, ScanEye, BookOpen, Terminal as TerminalIcon, ExternalLink,
-  Award, Cpu, Code2, Braces, Send, Loader2, CheckCircle2, AlertCircle, CalendarClock, Pill
-} from 'lucide-react';
+import { Menu, X, Sun, Moon, Github, Linkedin, Mail } from 'lucide-react';
 
 import kenzyImg from './assets/kenzy.jpg';
 import logoImg from './assets/kenzyLogo.png';
 import resumePdf from './assets/resume.pdf';
 
 /* ============================================================
-   THEME + GLOBAL STYLES
+   DESIGN SYSTEM — editorial monograph
+   Typography:  Fraunces (display) · Hanken Grotesk (text) · JetBrains Mono (metadata)
+   Surfaces:    warm paper interior, deep forest "cover" moments
+   Structure:   hairline rules + an index system, not cards-everywhere
    ============================================================ */
 const GlobalStyles = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Lato:wght@300;400;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
     :root, [data-theme='light'] {
-      --bg:#F3E5D0; --bg-alt:#F9F4EB; --ink:#2E4035; --accent:#C19A6B; --accent2:#B8B8AA;
-      --panel:#2E4035; --on-panel:#F3E5D0; --card:#FBF6EE; --line:rgba(46,64,53,.18);
-      --ink-70:rgba(46,64,53,.72);
-      --accent-text:#6E5026;   /* AA-readable accent for text/graphics on light surfaces */
-      --accent-ondark:#D8B482; /* AA-readable accent for text on dark panels */
-      --nav-bg:rgba(46,64,53,0.82);
+      --paper:#EFE7D6; --paper-2:#E7DEC8; --card:#F4EEE1;
+      --ink:#222D26; --ink-2:rgba(34,45,38,.66); --ink-3:rgba(34,45,38,.42);
+      --line:rgba(34,45,38,.16); --line-2:rgba(34,45,38,.30);
+      --accent:#A9743C; --accent-ink:#795225;
+      --panel:#222D26; --on-panel:#EFE7D6; --on-panel-2:rgba(239,231,214,.62);
+      --panel-line:rgba(239,231,214,.18); --accent-on-panel:#D6AC77;
+      --nav-bg:rgba(239,231,214,.70);
+      --sel-bg:#222D26; --sel-fg:#EFE7D6;
     }
     [data-theme='dark'] {
-      --bg:#151B17; --bg-alt:#1B221D; --ink:#EFE6D6; --accent:#D3AB78; --accent2:#8A9A8E;
-      --panel:#0F1411; --on-panel:#EFE6D6; --card:#1F2621; --line:rgba(239,230,214,.16);
-      --ink-70:rgba(239,230,214,.72);
-      --accent-text:#D3AB78; --accent-ondark:#D8B482;
-      --nav-bg:rgba(15,20,17,0.82);
+      --paper:#191E15; --paper-2:#20261C; --card:#1E241A;
+      --ink:#ECE3D1; --ink-2:rgba(236,227,209,.64); --ink-3:rgba(236,227,209,.42);
+      --line:rgba(236,227,209,.15); --line-2:rgba(236,227,209,.28);
+      --accent:#C99A63; --accent-ink:#D6AC77;
+      --panel:#0F130D; --on-panel:#ECE3D1; --on-panel-2:rgba(236,227,209,.60);
+      --panel-line:rgba(236,227,209,.14); --accent-on-panel:#D6AC77;
+      --nav-bg:rgba(21,25,17,.66);
+      --sel-bg:#ECE3D1; --sel-fg:#191E15;
     }
-
-    .font-serif { font-family:'Playfair Display', serif; }
-    .font-sans { font-family:'Lato', sans-serif; }
-    .font-mono { font-family:'JetBrains Mono', monospace; }
 
     html { scroll-behavior:smooth; }
+    body { font-family:'Hanken Grotesk', system-ui, sans-serif; -webkit-font-smoothing:antialiased; background:var(--paper); }
     * { -webkit-tap-highlight-color:transparent; }
 
-    .text-stroke {
-      -webkit-text-stroke:1px var(--ink); color:transparent; transition:all .3s ease;
-    }
-    .text-stroke:hover { -webkit-text-stroke:0; color:var(--ink); }
-    .text-stroke-light {
-      -webkit-text-stroke:1px var(--on-panel); color:transparent; transition:all .3s ease;
-    }
-    .text-stroke-light:hover { -webkit-text-stroke:0; color:var(--on-panel); }
-
-    .grain::before {
-      content:''; position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.05;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    /* Smooth light/dark crossfade — colors ease between themes everywhere.
+       Hover states use transform/opacity/background-size, so they stay snappy. */
+    *, *::before, *::after {
+      transition: color .5s ease, background-color .5s ease, border-color .5s ease, fill .5s ease;
     }
 
-    .blink { animation:blink 1s step-end infinite; }
+    /* Typewriter caret */
+    .blink { animation:blink 1.1s step-end infinite; }
     @keyframes blink { 50% { opacity:0; } }
 
-    @media (hover:hover) and (pointer:fine) { .hide-native-cursor, .hide-native-cursor * { cursor:none; } }
+    /* Warm animated aurora — sits behind content on the dark panels */
+    .aurora { position:absolute; inset:-25% -12%; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(38% 44% at 78% 26%, rgba(201,154,99,.60), transparent 70%),
+        radial-gradient(44% 50% at 88% 82%, rgba(110,140,116,.42), transparent 72%),
+        radial-gradient(34% 42% at 24% 88%, rgba(216,176,122,.34), transparent 70%);
+      filter:blur(28px); opacity:.85;
+      animation:auroraDrift 20s ease-in-out infinite alternate; }
+    @keyframes auroraDrift {
+      0%   { transform:translate3d(-2%,-1%,0) scale(1); }
+      100% { transform:translate3d(3%,2.5%,0) scale(1.14); }
+    }
 
-    ::selection { background:var(--ink); color:var(--bg); }
-    ::-webkit-scrollbar { width:10px; }
-    ::-webkit-scrollbar-track { background:var(--bg-alt); }
-    ::-webkit-scrollbar-thumb { background:var(--accent); border-radius:20px; }
+    /* Faint logo watermark filling generous whitespace (decorative) */
+    .watermark { position:absolute; pointer-events:none; z-index:0; user-select:none;
+      opacity:.05; mix-blend-mode:normal; }
+    [data-theme='dark'] .watermark { opacity:.06; }
 
-    /* Hidden scrollbar for the horizontal project carousel */
+    /* Subtle interactive nudge on list rows */
+    .row-nudge { transition:transform .35s cubic-bezier(.22,.61,.36,1), color .3s ease; }
+    .row-nudge:hover { transform:translateX(6px); }
+
+    /* Kinetic marquee (pauses on hover; freezes under reduced-motion) */
+    .marquee { display:flex; overflow:hidden; width:100%; user-select:none; -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+    .marquee__track { display:flex; flex-shrink:0; align-items:center; white-space:nowrap; animation:marquee 38s linear infinite; }
+    .marquee:hover .marquee__track { animation-play-state:paused; }
+    @keyframes marquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+    /* Ghosted display type — used sparingly, in a few well-spaced spots */
+    .ghost { position:absolute; z-index:0; pointer-events:none; user-select:none;
+      font-family:'Fraunces',serif; line-height:.8; letter-spacing:-.03em; font-weight:400; white-space:nowrap; }
+
+    .font-display { font-family:'Fraunces', Georgia, serif; font-optical-sizing:auto; }
+    .font-sans { font-family:'Hanken Grotesk', system-ui, sans-serif; }
+    .font-mono { font-family:'JetBrains Mono', ui-monospace, monospace; }
+
+    /* Editorial section index label */
+    .eyebrow { font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:11px;
+      letter-spacing:.28em; text-transform:uppercase; }
+
+    /* Inline text link — underline draws in on hover */
+    .u-link { position:relative; display:inline; text-decoration:none;
+      background-image:linear-gradient(currentColor,currentColor);
+      background-size:0% 1px; background-repeat:no-repeat; background-position:0 100%;
+      transition:background-size .4s cubic-bezier(.22,.61,.36,1), color .25s ease; }
+    .u-link:hover { background-size:100% 1px; }
+    /* Nav / persistent-underline variant retracts on hover */
+    .u-link--on { background-size:100% 1px; }
+    .u-link--on:hover { background-size:0% 1px; }
+
+    /* Nav links shift to the accent on hover */
+    .nav-link { transition:color .25s ease; }
+    .nav-link:hover { color:var(--nav-accent) !important; }
+
+    /* Underline-only form field */
+    .field { width:100%; background:transparent; border:0; border-bottom:1px solid var(--panel-line);
+      color:var(--on-panel); font-size:16px; padding:10px 2px; outline:none;
+      transition:border-color .25s ease; font-family:'Hanken Grotesk',sans-serif; }
+    .field::placeholder { color:var(--on-panel-2); }
+    .field:focus { border-color:var(--accent-on-panel); }
+
+    /* Very subtle paper grain — print texture, not decoration */
+    .grain::after {
+      content:''; position:fixed; inset:0; z-index:2; pointer-events:none; opacity:.035;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    ::selection { background:var(--sel-bg); color:var(--sel-fg); }
+    ::-webkit-scrollbar { width:11px; }
+    ::-webkit-scrollbar-track { background:var(--paper-2); }
+    ::-webkit-scrollbar-thumb { background:var(--line-2); }
+
     .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
     .no-scrollbar::-webkit-scrollbar { display:none; }
 
-    /* Visible keyboard focus indicator (WCAG 2.4.7) */
     a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
-      outline:3px solid var(--accent-ondark); outline-offset:2px; border-radius:6px;
+      outline:2px solid var(--accent); outline-offset:3px; border-radius:1px;
     }
-    /* Screen-reader-only helper */
-    .sr-only {
-      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
-      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
-    }
-    /* Respect reduced-motion preference (WCAG 2.3.3 / user comfort) */
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
-        animation-duration:0.001ms !important; animation-iteration-count:1 !important;
-        transition-duration:0.001ms !important; scroll-behavior:auto !important;
+        animation-duration:.001ms !important; animation-iteration-count:1 !important;
+        transition-duration:.001ms !important; scroll-behavior:auto !important;
       }
-      .blink { animation:none !important; }
     }
   `}</style>
 );
@@ -117,6 +169,7 @@ const EXPERIENCE = [
     title: 'Website Specialist',
     company: 'George Mason University — OSCAR',
     date: 'Nov 2025 — Present',
+    now: true,
     points: [
       'Led the information-architecture redesign of the OSCAR research platform for 25,000+ undergraduates, optimizing navigation and accessibility.',
       'Launched a conversion-optimized landing page that drove a 37% increase in attendance for the Celebration of Student Scholarship expo.',
@@ -128,8 +181,8 @@ const EXPERIENCE = [
     company: 'Verizon',
     date: 'May 2025 — Dec 2025',
     points: [
-      'Led a cross-functional team of 8 through a 15-week lifecycle to ship "Project Falcon," a YOLOv8 computer-vision system that replaced manual telecom infrastructure inspections.',
-      'Designed a custom "Confidence Gating" algorithm that filtered low-quality inference and raised system reliability to 95%.',
+      'Led a cross-functional team of 8 through a 15-week lifecycle to ship “Project Falcon,” a YOLOv8 computer-vision system that replaced manual telecom infrastructure inspections.',
+      'Designed a custom “Confidence Gating” algorithm that filtered low-quality inference and raised system reliability to 95%.',
       'Architected a fault-tolerant ingestion pipeline with local caching for 2,000+ images, bypassing API rate limits and cutting latency 40%.',
     ],
     stack: ['Python', 'YOLOv8', 'Computer Vision', 'Leadership'],
@@ -160,9 +213,8 @@ const PROJECTS = [
   {
     title: 'Project Falcon',
     role: 'AI Tech Fellow · Verizon',
-    icon: ScanEye,
     preview: 'falcon',
-    desc: 'A YOLOv8-powered computer-vision system that replaced manual telecom infrastructure inspections. Featured a custom "Confidence Gating" algorithm and a fault-tolerant ingestion pipeline handling 2,000+ images.',
+    desc: 'A YOLOv8-powered computer-vision system that replaced manual telecom infrastructure inspections. Featured a custom “Confidence Gating” algorithm and a fault-tolerant ingestion pipeline handling 2,000+ images.',
     metrics: ['95% reliability', '40% lower latency', 'Team of 8'],
     tags: ['Python', 'YOLOv8', 'Computer Vision'],
     proprietary: true,
@@ -170,7 +222,6 @@ const PROJECTS = [
   {
     title: 'BookNook',
     role: 'Full-Stack · REST',
-    icon: BookOpen,
     preview: 'booknook',
     desc: 'A full-stack web app (React, MongoDB, Google Cloud) delivering context-aware text analysis and search over a 10,000+ book catalog via REST APIs, with a state-driven caching layer that cut redundant API calls ~60%.',
     metrics: ['10,000+ books', '~60% fewer API calls'],
@@ -181,7 +232,6 @@ const PROJECTS = [
   {
     title: 'Wildfire Evacuation Threat Predictor',
     role: 'ML Engineer',
-    icon: Flame,
     preview: 'wildfire',
     desc: 'A predictive web app that helps emergency managers triage wildfire risk and prioritize evacuations across 12–72 hour horizons using Random Survival Forests and Gradient Boosting Survival Analysis, validated on real WatchDuty data.',
     metrics: ['12–72h horizons', 'C-index + Brier tuned'],
@@ -192,17 +242,16 @@ const PROJECTS = [
   {
     title: 'Study Buddy Steve',
     role: 'Full-Stack · AI · Cloud',
-    icon: CalendarClock,
     preview: 'studybuddy',
     desc: 'A full-stack study platform (React, Node.js, Python FastAPI microservices) with an AI document-parsing pipeline (OCR + LLMs) that auto-extracts class schedules from uploaded syllabi. Independently scalable services on Vercel + Google Cloud Run with JWT auth and MongoDB Atlas.',
     metrics: ['~90%+ extraction accuracy', 'Microservices'],
     tags: ['React', 'FastAPI', 'Google Cloud Run'],
     github: 'https://github.com/kenzyi2024/StudyBuddySteve',
+    live: 'https://study-buddy-steve.vercel.app/',
   },
   {
     title: 'Eye Got You',
     role: 'Mobile · React Native',
-    icon: Pill,
     preview: 'eyegotyou',
     desc: 'A cross-platform mobile app (React Native, Expo, TypeScript) that manages complex multi-medication regimens through a clinical rules engine, with on-device camera text recognition (MLKit) and barcode scanning in an accessible, dark-mode-first UI.',
     metrics: ['iOS + Android', 'On-device OCR'],
@@ -213,28 +262,16 @@ const PROJECTS = [
 
 const SKILLS = [
   {
-    group: 'Languages', icon: Code2,
-    items: [
-      { name: 'Python', level: 90 }, { name: 'JavaScript', level: 88 },
-      { name: 'TypeScript', level: 80 }, { name: 'Java', level: 78 },
-      { name: 'C / C++', level: 70 }, { name: 'HTML/CSS', level: 92 },
-    ],
+    group: 'Languages',
+    items: ['Python', 'JavaScript', 'TypeScript', 'Java', 'C / C++', 'HTML / CSS'],
   },
   {
-    group: 'Frameworks & Libraries', icon: Braces,
-    items: [
-      { name: 'React.js', level: 88 }, { name: 'Node.js', level: 78 },
-      { name: 'Tailwind CSS', level: 90 }, { name: 'Scikit-learn', level: 75 },
-      { name: 'Pandas', level: 78 },
-    ],
+    group: 'Frameworks & Libraries',
+    items: ['React.js', 'Node.js', 'Tailwind CSS', 'Scikit-learn', 'Pandas'],
   },
   {
-    group: 'ML & Tools', icon: Cpu,
-    items: [
-      { name: 'Computer Vision / YOLOv8', level: 76 }, { name: 'Git & GitHub', level: 88 },
-      { name: 'MongoDB', level: 74 }, { name: 'REST APIs', level: 82 },
-      { name: 'Figma', level: 80 },
-    ],
+    group: 'ML & Tooling',
+    items: ['Computer Vision · YOLOv8', 'Git & GitHub', 'MongoDB', 'REST APIs', 'Figma'],
   },
 ];
 
@@ -247,36 +284,46 @@ const CERTS = [
    HOOKS
    ============================================================ */
 function useTheme() {
-  const [theme, setTheme] = useState('light');
-  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
+  const [theme, setTheme] = useState(() => {
+    try { const t = localStorage.getItem('theme'); if (t === 'dark' || t === 'light') return t; } catch { /* ignore */ }
+    return 'light';
+  });
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem('theme', theme); } catch { /* ignore */ }
+  }, [theme]);
   return [theme, () => setTheme(t => (t === 'light' ? 'dark' : 'light'))];
 }
 
-function useTyping(phrases, { type = 70, del = 40, hold = 1400 } = {}) {
+// Rotating typewriter effect (restored from the original site)
+function useTyping(phrases, { type = 68, del = 38, hold = 1500 } = {}) {
+  const reduce = useReducedMotion();
   const [text, setText] = useState('');
   const [i, setI] = useState(0);
   const [deleting, setDeleting] = useState(false);
   useEffect(() => {
+    if (reduce) return;
     const full = phrases[i % phrases.length];
     const done = !deleting && text === full;
     const empty = deleting && text === '';
-    const delay = done ? hold : empty ? 400 : deleting ? del : type;
+    const delay = done ? hold : empty ? 420 : deleting ? del : type;
     const t = setTimeout(() => {
       if (done) setDeleting(true);
       else if (empty) { setDeleting(false); setI(x => x + 1); }
       else setText(full.substring(0, text.length + (deleting ? -1 : 1)));
     }, delay);
     return () => clearTimeout(t);
-  }, [text, deleting, i, phrases, type, del, hold]);
-  return text;
+  }, [text, deleting, i, phrases, type, del, hold, reduce]);
+  return reduce ? phrases[0] : text;
 }
 
-function CountUp({ value, decimals = 0, suffix = '', duration = 1600 }) {
+function CountUp({ value, decimals = 0, suffix = '', duration = 1400 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
+  const reduce = useReducedMotion();
   const [val, setVal] = useState(0);
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || reduce) return;
     let raf, start;
     const step = (t) => {
       if (!start) start = t;
@@ -286,117 +333,129 @@ function CountUp({ value, decimals = 0, suffix = '', duration = 1600 }) {
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [inView, value, duration]);
-  const display = decimals ? val.toFixed(decimals) : Math.round(val).toLocaleString();
+  }, [inView, value, duration, reduce]);
+  const shown = reduce ? value : val;
+  const display = decimals ? shown.toFixed(decimals) : Math.round(shown).toLocaleString();
   return <span ref={ref}>{display}{suffix}</span>;
 }
 
 /* ============================================================
-   CUSTOM CURSOR
+   PRIMITIVES
    ============================================================ */
-const CustomCursor = () => {
-  const x = useMotionValue(-100), y = useMotionValue(-100);
-  const sx = useSpring(x, { stiffness: 500, damping: 40 });
-  const sy = useSpring(y, { stiffness: 500, damping: 40 });
-  const dx = useSpring(x, { stiffness: 120, damping: 18 });
-  const dy = useSpring(y, { stiffness: 120, damping: 18 });
-  const [hover, setHover] = useState(false);
+const Container = ({ children, className = '' }) => (
+  <div className={`mx-auto w-full max-w-[1160px] px-5 sm:px-8 lg:px-14 ${className}`}>{children}</div>
+);
 
-  useEffect(() => {
-    if (window.matchMedia('(pointer:coarse)').matches) return;
-    const move = e => { x.set(e.clientX); y.set(e.clientY); };
-    const over = e => setHover(!!e.target.closest('a,button,[data-cursor]'));
-    window.addEventListener('mousemove', move);
-    window.addEventListener('mouseover', over);
-    document.body.classList.add('hide-native-cursor');
-    return () => {
-      window.removeEventListener('mousemove', move);
-      window.removeEventListener('mouseover', over);
-      document.body.classList.remove('hide-native-cursor');
-    };
-  }, [x, y]);
-
-  if (typeof window !== 'undefined' && window.matchMedia('(pointer:coarse)').matches) return null;
-  return (
-    <>
-      <motion.div className="fixed z-[100] pointer-events-none rounded-full mix-blend-difference"
-        style={{ left: sx, top: sy, x: '-50%', y: '-50%', width: 8, height: 8, background: '#fff' }} />
-      <motion.div className="fixed z-[100] pointer-events-none rounded-full border mix-blend-difference"
-        style={{
-          left: dx, top: dy, x: '-50%', y: '-50%', borderColor: '#fff',
-          width: hover ? 56 : 34, height: hover ? 56 : 34,
-        }}
-        animate={{ opacity: hover ? 1 : 0.6 }} transition={{ duration: 0.2 }} />
-    </>
-  );
-};
-
-/* ============================================================
-   ANIMATED BACKGROUND
-   ============================================================ */
-const Blobs = () => {
+const Reveal = ({ children, className = '', style, as = 'div', y = 22, delay = 0, mount = false }) => {
   const reduce = useReducedMotion();
+  const M = motion[as] || motion.div;
+  if (reduce) return React.createElement(as, { className, style }, children);
+  const trigger = mount
+    ? { animate: { opacity: 1, y: 0 } }
+    : { whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-70px' } };
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      <motion.div className="absolute w-[42rem] h-[42rem] rounded-full blur-3xl"
-        style={{ background: 'var(--accent)', opacity: 0.12, top: '-8rem', left: '-8rem' }}
-        animate={reduce ? undefined : { x: [0, 60, 0], y: [0, 40, 0] }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />
-      <motion.div className="absolute w-[36rem] h-[36rem] rounded-full blur-3xl"
-        style={{ background: 'var(--accent2)', opacity: 0.12, bottom: '-6rem', right: '-6rem' }}
-        animate={reduce ? undefined : { x: [0, -50, 0], y: [0, -30, 0] }}
-        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }} />
-    </div>
+    <M
+      initial={{ opacity: 0, y }}
+      {...trigger}
+      transition={{ duration: 0.7, ease: [0.22, 0.61, 0.36, 1], delay }}
+      className={className} style={style}
+    >{children}</M>
   );
 };
 
-/* ============================================================
-   SHARED
-   ============================================================ */
-const Heading = ({ children, light, align = 'text-center', kicker }) => (
-  <div className={`mb-10 md:mb-14 ${align}`}>
-    {kicker && (
-      <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-        className="font-mono text-xs tracking-[0.3em] uppercase mb-3"
-        style={{ color: light ? 'var(--accent-ondark)' : 'var(--accent-text)' }}>{kicker}</motion.p>
-    )}
-    <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
-      className={`font-serif font-bold text-4xl md:text-6xl ${light ? 'text-[var(--on-panel)]' : 'text-[var(--ink)]'}`}>
-      {children}
-    </motion.h2>
+const SectionHead = ({ index, label, title, light = false }) => {
+  const reduce = useReducedMotion();
+  const lineBg = light ? 'var(--panel-line)' : 'var(--line)';
+  return (
+    <Reveal className="mb-12 md:mb-16">
+      <div className="flex items-center gap-4 sm:gap-6">
+        <span className="font-mono text-xs" style={{ color: light ? 'var(--accent-on-panel)' : 'var(--accent-ink)' }}>{index}</span>
+        <span className="eyebrow" style={{ color: light ? 'var(--on-panel-2)' : 'var(--ink-2)' }}>{label}</span>
+        {reduce ? (
+          <span className="h-px flex-1" style={{ background: lineBg }} />
+        ) : (
+          <motion.span className="h-px flex-1 origin-left" style={{ background: lineBg }}
+            initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true, margin: '-70px' }}
+            transition={{ duration: 0.9, ease: [0.22, 0.61, 0.36, 1], delay: 0.12 }} />
+        )}
+      </div>
+      {title && (
+        <h2 className="font-display mt-6 md:mt-7 text-[2.5rem] leading-[1.02] sm:text-6xl md:text-[4.4rem] tracking-[-0.02em]"
+          style={{ color: light ? 'var(--on-panel)' : 'var(--ink)', fontWeight: 400 }}>
+          {title}
+        </h2>
+      )}
+    </Reveal>
+  );
+};
+
+// Understated inline text link with a trailing mark
+const LinkArrow = ({ href, children, mark = '↗', external = true, className = '', style, onClick }) => (
+  <a href={href} onClick={onClick}
+    {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
+    className={`u-link inline-flex items-baseline gap-1.5 font-sans text-[15px] ${className}`} style={style}>
+    <span>{children}</span>
+    {mark && <span aria-hidden="true" className="text-[0.85em]">{mark}</span>}
+  </a>
+);
+
+// Social platform icon links
+const SOCIALS = [
+  { label: 'GitHub', href: LINKS.github, Icon: Github, external: true },
+  { label: 'LinkedIn', href: LINKS.linkedin, Icon: Linkedin, external: true },
+  { label: 'Email', href: `mailto:${LINKS.email}`, Icon: Mail, external: false },
+];
+
+const Socials = ({ items = SOCIALS, color, showLabels = false, size = 18, gapClass = 'gap-x-5 gap-y-2', className = '' }) => (
+  <div className={`flex flex-wrap items-center ${gapClass} ${className}`}>
+    {items.map(({ label, href, Icon, external }) => (
+      <a key={label} href={href} aria-label={label}
+        {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
+        className="inline-flex items-center gap-2 transition-all duration-300 hover:opacity-60 hover:-translate-y-0.5" style={{ color }}>
+        <Icon size={size} strokeWidth={1.6} aria-hidden="true" />
+        {showLabels && <span className="font-sans text-sm">{label}</span>}
+      </a>
+    ))}
   </div>
 );
 
-const MagneticButton = ({ children, className = '', ...props }) => {
-  const ref = useRef(null);
-  const x = useMotionValue(0), y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 300, damping: 20 });
-  const sy = useSpring(y, { stiffness: 300, damping: 20 });
-  const move = e => {
-    const r = ref.current.getBoundingClientRect();
-    x.set((e.clientX - (r.left + r.width / 2)) * 0.3);
-    y.set((e.clientY - (r.top + r.height / 2)) * 0.3);
-  };
-  const leave = () => { x.set(0); y.set(0); };
-  return (
-    <motion.a ref={ref} onMouseMove={move} onMouseLeave={leave} style={{ x: sx, y: sy }}
-      className={className} {...props}>{children}</motion.a>
-  );
-};
+// Ghosted display type — used sparingly (a few well-spaced spots, not every section)
+const GhostType = ({ children, className = '', color = 'var(--ink)', opacity = 0.05, rotate = 0 }) => (
+  <span aria-hidden="true" className={`ghost ${className}`}
+    style={{ color, opacity, transform: rotate ? `rotate(${rotate}deg)` : undefined }}>{children}</span>
+);
+
+// Kinetic tech marquee — a refined, clearly-bounded band
+const MARQUEE_ITEMS = [
+  'Full-stack', 'Machine Learning', 'Computer Vision', 'React', 'Python',
+  'TypeScript', 'Node.js', 'FastAPI', 'REST APIs', 'MongoDB', 'Google Cloud', 'YOLOv8',
+];
+const Marquee = () => (
+  <section aria-label="Technologies" className="relative overflow-hidden py-9 md:py-12">
+    <div className="marquee">
+      <div className="marquee__track">
+        {MARQUEE_ITEMS.concat(MARQUEE_ITEMS).map((t, i) => (
+          <span key={i} className="inline-flex items-center" aria-hidden="true">
+            <span className="font-display italic text-[1.9rem] md:text-[2.6rem] px-6 md:px-9" style={{ color: 'var(--ink-2)', fontWeight: 300 }}>{t}</span>
+            <span className="font-display text-[1.9rem] md:text-[2.6rem]" style={{ color: 'var(--accent-ink)', fontWeight: 300 }}>/</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+);
 
 /* ============================================================
-   PROJECT PREVIEW  (on-brand SVG mockups — swap for real
-   screenshots by dropping an <img> in place of <ProjectPreview/>)
+   PROJECT PREVIEW  (hand-built SVG mockups — a real asset, kept
+   and re-framed. Swap for a screenshot by replacing the <svg>.)
    ============================================================ */
-const BrowserFrame = ({ url, children }) => (
-  <div className="rounded-t-2xl overflow-hidden">
-    <div className="flex items-center gap-1.5 px-3 py-2" style={{ background: 'var(--panel)' }}>
-      <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-      <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-      <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
-      <span className="ml-2 flex-1 truncate rounded-md px-2 py-0.5 font-mono text-[9px] text-white/50"
-        style={{ background: 'rgba(255,255,255,.08)' }}>{url}</span>
+const Frame = ({ url, children }) => (
+  <div className="overflow-hidden" style={{ border: '1px solid var(--line-2)', background: 'var(--panel)' }}>
+    <div className="flex items-center gap-1.5 px-3.5 py-2.5" style={{ borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+      <span className="w-2 h-2 rounded-full" style={{ background: 'rgba(255,255,255,.28)' }} />
+      <span className="w-2 h-2 rounded-full" style={{ background: 'rgba(255,255,255,.18)' }} />
+      <span className="w-2 h-2 rounded-full" style={{ background: 'rgba(255,255,255,.12)' }} />
+      <span className="ml-2 flex-1 truncate font-mono text-[10px]" style={{ color: 'var(--on-panel-2)' }}>{url}</span>
     </div>
     <div className="relative aspect-[16/10] overflow-hidden">{children}</div>
   </div>
@@ -405,7 +464,7 @@ const BrowserFrame = ({ url, children }) => (
 const ProjectPreview = ({ kind }) => {
   if (kind === 'falcon') {
     return (
-      <BrowserFrame url="verizon · internal — project-falcon">
+      <Frame url="verizon · internal — project-falcon">
         <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#0e1310' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Computer-vision detection preview">
           <defs>
             <radialGradient id="falconLift" cx="50%" cy="50%" r="62%">
@@ -430,7 +489,7 @@ const ProjectPreview = ({ kind }) => {
             animate={{ y: [10, 190, 10] }} transition={{ duration: 4, repeat: Infinity, ease: 'linear' }} />
           <text x="12" y="188" fontFamily="monospace" fontSize="9" fill="#e8f0e8">confidence gating · reliability 95%</text>
         </svg>
-      </BrowserFrame>
+      </Frame>
     );
   }
   if (kind === 'booknook') {
@@ -439,7 +498,7 @@ const ProjectPreview = ({ kind }) => {
       ['#F3E5D0', 76], ['#C19A6B', 100], ['#546b5a', 70], ['#B8B8AA', 84],
     ];
     return (
-      <BrowserFrame url="booknook · reading companion">
+      <Frame url="booknook · reading companion">
         <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#1c2620' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="BookNook — a cozy shelf with an AI reading companion">
           <defs>
             <radialGradient id="bnGlow" cx="50%" cy="56%" r="60%">
@@ -448,48 +507,42 @@ const ProjectPreview = ({ kind }) => {
             </radialGradient>
           </defs>
           <rect width="320" height="200" fill="#1c2620" />
-          <motion.rect width="320" height="200" fill="url(#bnGlow)"
-            animate={{ opacity: [0.75, 1, 0.75] }} transition={{ duration: 4, repeat: Infinity }} />
-          {/* cozy shelf of books */}
+          <rect width="320" height="200" fill="url(#bnGlow)" opacity="0.9" />
           {shelf.map(([c, h], i) => {
             const x = 46 + i * 26;
             return (
-              <motion.g key={i} animate={{ y: [0, -2, 0] }}
-                transition={{ duration: 2.6, repeat: Infinity, delay: i * 0.16, ease: 'easeInOut' }}>
+              <g key={i}>
                 <rect x={x} y={150 - h} width="22" height={h} rx="3" fill={c} />
                 <rect x={x} y={150 - h} width="22" height="5" rx="2" fill="#fff" opacity="0.12" />
                 <rect x={x + 3} y={150 - h + 12} width="16" height="3" rx="1.5" fill="#D8B482" opacity="0.85" />
-              </motion.g>
+              </g>
             );
           })}
-          {/* wooden shelf */}
           <rect x="28" y="163" width="264" height="6" fill="#000" opacity="0.28" />
           <rect x="28" y="150" width="264" height="14" rx="3" fill="#6E5026" />
           <rect x="28" y="150" width="264" height="3" rx="2" fill="#C19A6B" opacity="0.6" />
-          {/* floating AI companion bubble */}
-          <motion.g animate={{ y: [0, -5, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
+          <g>
             <rect x="110" y="14" width="100" height="34" rx="10" fill="#F3E5D0" />
             <path d="M150 46 l9 10 l7 -10 Z" fill="#F3E5D0" />
-            <motion.path d="M130 24 l2.5 6 l6 2.5 l-6 2.5 l-2.5 6 l-2.5 -6 l-6 -2.5 l6 -2.5 Z" fill="#C19A6B"
-              animate={{ scale: [1, 1.25, 1], opacity: [0.85, 1, 0.85] }} transition={{ duration: 2, repeat: Infinity }}
-              style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
+            <path d="M130 24 l2.5 6 l6 2.5 l-6 2.5 l-2.5 6 l-2.5 -6 l-6 -2.5 l6 -2.5 Z" fill="#C19A6B" />
+            {/* the one gentle motion: a typing indicator */}
             <motion.circle cx="156" cy="31" r="3" fill="#2E4035"
-              animate={{ opacity: [0, 1, 1, 1, 0, 0] }} transition={{ duration: 1.8, repeat: Infinity, times: [0, 0.12, 0.37, 0.62, 0.75, 1] }} />
+              animate={{ opacity: [0.2, 1, 1, 1, 0.2, 0.2] }} transition={{ duration: 2.2, repeat: Infinity, times: [0, 0.12, 0.37, 0.62, 0.75, 1] }} />
             <motion.circle cx="168" cy="31" r="3" fill="#2E4035"
-              animate={{ opacity: [0, 0, 1, 1, 0, 0] }} transition={{ duration: 1.8, repeat: Infinity, times: [0, 0.12, 0.37, 0.62, 0.75, 1] }} />
+              animate={{ opacity: [0.2, 0.2, 1, 1, 0.2, 0.2] }} transition={{ duration: 2.2, repeat: Infinity, times: [0, 0.12, 0.37, 0.62, 0.75, 1] }} />
             <motion.circle cx="180" cy="31" r="3" fill="#C19A6B"
-              animate={{ opacity: [0, 0, 0, 1, 0, 0] }} transition={{ duration: 1.8, repeat: Infinity, times: [0, 0.12, 0.37, 0.62, 0.75, 1] }} />
-          </motion.g>
+              animate={{ opacity: [0.2, 0.2, 0.2, 1, 0.2, 0.2] }} transition={{ duration: 2.2, repeat: Infinity, times: [0, 0.12, 0.37, 0.62, 0.75, 1] }} />
+          </g>
           <text x="160" y="190" textAnchor="middle" fontFamily="monospace" fontSize="8" fill="#B8B8AA">recaps · analysis · Socratic seminars</text>
         </svg>
-      </BrowserFrame>
+      </Frame>
     );
   }
   if (kind === 'studybuddy') {
     const blink = { scaleY: [1, 1, 0.1, 1, 1] };
     const blinkT = { duration: 3.2, repeat: Infinity, times: [0, 0.92, 0.96, 0.99, 1] };
     return (
-      <BrowserFrame url="studybuddysteve.app">
+      <Frame url="studybuddysteve.app">
         <svg viewBox="0 0 320 200" className="w-full h-full" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Study Buddy Steve — retro 8-bit study buddy that reads your syllabus">
           <rect width="320" height="200" fill="#1c2620" />
           <defs>
@@ -499,21 +552,16 @@ const ProjectPreview = ({ kind }) => {
             </radialGradient>
           </defs>
           <rect width="320" height="200" fill="url(#steveLift)" />
-          {/* CRT scanlines */}
           {[...Array(25)].map((_, i) => <rect key={i} x="0" y={i * 8} width="320" height="3" fill="#000" opacity="0.08" />)}
-          {/* neon frame */}
           <rect x="7" y="7" width="306" height="186" rx="6" fill="none" stroke="#C19A6B" strokeWidth="2" opacity="0.7" />
-          {/* headline */}
           <text x="20" y="52" fontFamily="monospace" fontWeight="700" fontSize="16" fill="#F3E5D0" letterSpacing="1">STOP RETYPING</text>
           <text x="20" y="72" fontFamily="monospace" fontWeight="700" fontSize="16" fill="#D8B482" letterSpacing="1">YOUR SYLLABUS</text>
-          {/* loading bar */}
           <rect x="20" y="150" width="150" height="15" rx="3" fill="#000" opacity="0.4" />
           <rect x="20" y="150" width="150" height="15" rx="3" fill="none" stroke="#C19A6B" strokeWidth="1.5" />
           <motion.rect x="22" y="152" height="11" rx="2" fill="#B8B8AA"
             animate={{ width: [0, 146, 146, 0] }} transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', times: [0, 0.6, 0.85, 1] }} />
           <text x="20" y="182" fontFamily="monospace" fontSize="8" fill="#D8B482">▸ LOADING SEMESTER.EXE</text>
-          {/* Steve the robot */}
-          <motion.g animate={{ y: [0, -4, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
+          <g>
             <rect x="223" y="70" width="3" height="12" fill="#2E4035" /><circle cx="224.5" cy="68" r="3.5" fill="#C19A6B" />
             <rect x="256" y="70" width="3" height="12" fill="#2E4035" /><circle cx="257.5" cy="68" r="3.5" fill="#B8B8AA" />
             <rect x="205" y="82" width="72" height="50" rx="9" fill="#B8B8AA" stroke="#2E4035" strokeWidth="2" />
@@ -528,14 +576,14 @@ const ProjectPreview = ({ kind }) => {
             <circle cx="241" cy="165" r="4" fill="#141a16" />
             <rect x="224" y="174" width="12" height="11" rx="3" fill="#2E4035" />
             <rect x="246" y="174" width="12" height="11" rx="3" fill="#2E4035" />
-          </motion.g>
+          </g>
         </svg>
-      </BrowserFrame>
+      </Frame>
     );
   }
   if (kind === 'eyegotyou') {
     return (
-      <BrowserFrame url="Eye Got You · iOS & Android">
+      <Frame url="Eye Got You · iOS & Android">
         <svg viewBox="0 0 320 200" className="w-full h-full" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Eye Got You — medication reminders, an eye keeping watch over your doses">
           <defs>
             <radialGradient id="egyBg" cx="50%" cy="46%" r="72%">
@@ -544,34 +592,28 @@ const ProjectPreview = ({ kind }) => {
             </radialGradient>
           </defs>
           <rect width="320" height="200" fill="url(#egyBg)" />
-          {/* pulsing scan rings — an eye keeping watch */}
           {[40, 58, 76].map((r, i) => (
-            <motion.circle key={i} cx="160" cy="100" r={r} fill="none" stroke="#C19A6B" strokeWidth="1"
-              animate={{ opacity: [0.32 - i * 0.07, 0.04, 0.32 - i * 0.07] }}
-              transition={{ duration: 3, repeat: Infinity, delay: i * 0.3 }} />
+            <circle key={i} cx="160" cy="100" r={r} fill="none" stroke="#C19A6B" strokeWidth="1" opacity={0.26 - i * 0.07} />
           ))}
-          {/* eye */}
           <path d="M92 100 Q 160 50 228 100 Q 160 150 92 100 Z" fill="#0a1613" stroke="#F3E5D0" strokeWidth="2.5" />
           <circle cx="160" cy="100" r="27" fill="#1c2620" stroke="#C19A6B" strokeWidth="2" />
           <motion.circle cx="160" cy="100" r="27" fill="none" stroke="#D8B482" strokeWidth="2"
             animate={{ r: [27, 32], opacity: [0.85, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut' }} />
-          <motion.circle cx="160" cy="100" fill="#F3E5D0" r="11"
-            animate={{ r: [11, 8, 11] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }} />
+          <circle cx="160" cy="100" fill="#F3E5D0" r="10" />
           <circle cx="160" cy="100" r="6" fill="#0a1613" />
           <circle cx="166" cy="94" r="2.5" fill="#F3E5D0" />
-          {/* dropper + falling drop */}
           <rect x="150" y="14" width="20" height="8" rx="2" fill="#C19A6B" />
           <rect x="156" y="20" width="8" height="14" rx="2" fill="#D8B482" />
           <motion.path d="M160 38 c 4.5 6 4.5 9.5 0 12.5 c -4.5 -3 -4.5 -6.5 0 -12.5 Z" fill="#C19A6B"
             animate={{ y: [0, 46, 46], opacity: [1, 1, 0] }} transition={{ duration: 2.4, repeat: Infinity, times: [0, 0.72, 1], ease: 'easeIn' }} />
           <text x="160" y="182" textAnchor="middle" fontFamily="monospace" fontSize="9" fill="#B8B8AA" letterSpacing="1">every dose, on time.</text>
         </svg>
-      </BrowserFrame>
+      </Frame>
     );
   }
   // wildfire
   return (
-    <BrowserFrame url="wildfire-evac-app.streamlit.app">
+    <Frame url="wildfire-evac-app.streamlit.app">
       <svg viewBox="0 0 320 200" className="w-full h-full" style={{ background: '#151B17' }} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Wildfire risk map preview">
         <defs>
           <radialGradient id="risk" cx="62%" cy="45%" r="55%">
@@ -583,7 +625,7 @@ const ProjectPreview = ({ kind }) => {
         <rect width="320" height="200" fill="url(#risk)" />
         {[...Array(7)].map((_, i) => <path key={i} d={`M0 ${30 + i * 26} Q 80 ${18 + i * 26} 160 ${30 + i * 26} T 320 ${30 + i * 26}`} fill="none" stroke="#8A9A8E" strokeWidth="0.6" opacity="0.4" />)}
         {[40, 62, 84].map((r, i) => <circle key={i} cx="198" cy="90" r={r} fill="none" stroke="#C19A6B" strokeWidth="1" opacity={0.5 - i * 0.12} />)}
-        <motion.g animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 1.6, repeat: Infinity }} style={{ transformOrigin: '198px 90px' }}>
+        <motion.g animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }} style={{ transformOrigin: '198px 90px' }}>
           <path d="M198 74 C 206 84, 206 92, 198 100 C 190 92, 190 84, 198 74 Z" fill="#C19A6B" />
         </motion.g>
         <rect x="12" y="12" width="120" height="34" rx="6" fill="#0f1411" opacity="0.7" />
@@ -591,12 +633,42 @@ const ProjectPreview = ({ kind }) => {
         <text x="22" y="40" fontFamily="monospace" fontSize="11" fill="#C19A6B">12–72h · high</text>
         <text x="12" y="190" fontFamily="monospace" fontSize="8" fill="#e8f0e8" opacity="0.8">Random Survival Forests · C-index tuned</text>
       </svg>
-    </BrowserFrame>
+    </Frame>
+  );
+};
+
+/* Floating, tilted, scroll-drifting project media (a la Spencer Gabor) */
+const ProjectMedia = ({ p, flip }) => {
+  const reduce = useReducedMotion();
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [46, -46]);
+  return (
+    <motion.div ref={ref} style={{ y }} className={flip ? 'md:order-2' : ''}>
+      <motion.div
+        initial={reduce ? undefined : { rotate: flip ? 2.4 : -2.4 }}
+        whileInView={reduce ? undefined : { rotate: flip ? 1.5 : -1.5 }}
+        whileHover={reduce ? undefined : { rotate: 0, scale: 1.02 }}
+        viewport={{ once: true, margin: '-70px' }}
+        transition={{ type: 'spring', stiffness: 140, damping: 16 }}
+        className="relative group"
+        style={{ boxShadow: '0 34px 70px -34px rgba(0,0,0,.42)' }}>
+        <ProjectPreview kind={p.preview} />
+        {p.live && (
+          <a href={p.live} target="_blank" rel="noreferrer"
+            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ background: 'rgba(14,19,15,.55)' }} aria-label={`Open ${p.title} live`}>
+            <span className="px-6 py-3 eyebrow inline-flex items-center gap-2"
+              style={{ background: 'var(--accent)', color: '#1c130a' }}>Live demo ↗</span>
+          </a>
+        )}
+      </motion.div>
+    </motion.div>
   );
 };
 
 /* ============================================================
-   INTERACTIVE TERMINAL
+   INTERACTIVE TERMINAL  (kept — genuinely functional for a SWE)
    ============================================================ */
 const Terminal = () => {
   const [history, setHistory] = useState([
@@ -604,7 +676,6 @@ const Terminal = () => {
   ]);
   const [input, setInput] = useState('');
   const boxRef = useRef(null);
-  // Keep the terminal pinned to its latest line WITHOUT scrolling the page.
   useEffect(() => { const b = boxRef.current; if (b) b.scrollTop = b.scrollHeight; }, [history]);
 
   const run = (raw) => {
@@ -636,29 +707,29 @@ const Terminal = () => {
   };
 
   return (
-    <div data-cursor className="max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl border"
-      style={{ background: '#0d120f', borderColor: 'var(--line)' }}>
-      <div className="flex items-center gap-2 px-4 py-3" style={{ background: '#151b16' }}>
-        <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-        <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-        <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
-        <span className="ml-3 font-mono text-xs text-white/50">kenzy@portfolio ~ %</span>
+    <div className="max-w-3xl overflow-hidden"
+      style={{ background: '#0d120f', border: '1px solid var(--line-2)' }}>
+      <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+        <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(255,255,255,.26)' }} />
+        <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(255,255,255,.18)' }} />
+        <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(255,255,255,.12)' }} />
+        <span className="ml-3 font-mono text-xs text-white/45">kenzy@portfolio ~ %</span>
       </div>
-      <div ref={boxRef} className="p-5 font-mono text-sm h-72 overflow-y-auto text-[#c8e6c9]"
+      <div ref={boxRef} className="p-5 font-mono text-sm h-72 overflow-y-auto text-[#c8d8c9]"
         role="log" aria-live="polite" aria-label="Terminal output"
         onClick={e => e.currentTarget.querySelector('input')?.focus({ preventScroll: true })}>
         {history.map((h, i) => (
           <div key={i} className="mb-1 break-words">
             {h.type === 'in'
-              ? <span><span className="text-[#7fd18a]">$</span> <span className="text-white/90">{h.text}</span></span>
-              : <span className="text-[#a9d6b0]">{h.text}</span>}
+              ? <span><span className="text-[#8fbf95]">$</span> <span className="text-white/90">{h.text}</span></span>
+              : <span className="text-[#a9c6ae]">{h.text}</span>}
           </div>
         ))}
         <div className="flex items-center">
-          <span className="text-[#7fd18a] mr-2">$</span>
+          <span className="text-[#8fbf95] mr-2">$</span>
           <input value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); run(input); } }}
-            className="flex-1 bg-transparent outline-none text-white/90 caret-[#7fd18a]"
+            className="flex-1 bg-transparent outline-none text-white/90 caret-[#8fbf95]"
             spellCheck={false} aria-label="terminal input" />
         </div>
       </div>
@@ -671,7 +742,7 @@ const Terminal = () => {
    ============================================================ */
 const ContactForm = () => {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState('idle'); // idle | submitting | success | error
+  const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
 
   const update = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -688,7 +759,6 @@ const ContactForm = () => {
     const configured = FORM_ENDPOINT && !FORM_ENDPOINT.includes('your_form_id');
 
     if (!configured) {
-      // Zero-config fallback: open the visitor's mail client, pre-filled.
       const subject = encodeURIComponent(`Portfolio message from ${form.name}`);
       const body = encodeURIComponent(`${form.message}\n\n— ${form.name} (${form.email})`);
       window.location.href = `mailto:${LINKS.email}?subject=${subject}&body=${body}`;
@@ -709,64 +779,242 @@ const ContactForm = () => {
     }
   };
 
-  const field = 'w-full rounded-xl px-4 py-3 font-sans text-sm outline-none transition-colors';
-  const fieldStyle = {
-    background: 'rgba(255,255,255,.06)', color: 'var(--on-panel)',
-    border: '1px solid rgba(255,255,255,.16)',
-  };
-
   if (status === 'success') {
     return (
-      <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-xl mx-auto rounded-2xl p-10 text-center border"
-        style={{ background: 'rgba(255,255,255,.05)', borderColor: 'rgba(255,255,255,.16)' }}>
-        <CheckCircle2 size={44} className="mx-auto mb-4" style={{ color: 'var(--accent-ondark)' }} aria-hidden="true" />
-        <h3 className="font-serif text-3xl text-[var(--on-panel)] mb-2">Message on its way.</h3>
-        <p className="font-sans text-[var(--on-panel)]/60 mb-6">Thanks for reaching out — I&apos;ll get back to you soon.</p>
+      <div className="max-w-xl">
+        <p className="font-display text-3xl md:text-4xl" style={{ color: 'var(--on-panel)' }}>Message on its way.</p>
+        <p className="font-sans mt-3" style={{ color: 'var(--on-panel-2)' }}>Thanks for reaching out — I’ll get back to you soon.</p>
         <button onClick={() => setStatus('idle')}
-          className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--accent-ondark)' }}>
+          className="u-link mt-5 eyebrow" style={{ color: 'var(--accent-on-panel)' }}>
           Send another →
         </button>
-      </motion.div>
+      </div>
     );
   }
 
-  const labelCls = 'block font-mono text-[10px] tracking-widest uppercase mb-2 text-[var(--on-panel)]/80';
+  const labelCls = 'block eyebrow mb-1';
   const described = error ? 'cf-error' : undefined;
 
   return (
-    <form onSubmit={submit} noValidate data-cursor className="w-full max-w-xl mx-auto text-left">
-      <div className="grid sm:grid-cols-2 gap-4 mb-4">
+    <form onSubmit={submit} noValidate className="max-w-xl">
+      <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6 mb-6">
         <div>
-          <label htmlFor="cf-name" className={labelCls}>Name</label>
+          <label htmlFor="cf-name" className={labelCls} style={{ color: 'var(--on-panel-2)' }}>Name</label>
           <input id="cf-name" name="name" value={form.name} onChange={update} placeholder="Your name"
-            required aria-required="true" autoComplete="name" aria-describedby={described}
-            className={field} style={fieldStyle} />
+            required aria-required="true" autoComplete="name" aria-describedby={described} className="field" />
         </div>
         <div>
-          <label htmlFor="cf-email" className={labelCls}>Email</label>
+          <label htmlFor="cf-email" className={labelCls} style={{ color: 'var(--on-panel-2)' }}>Email</label>
           <input id="cf-email" name="email" type="email" value={form.email} onChange={update} placeholder="you@email.com"
-            required aria-required="true" autoComplete="email" aria-describedby={described}
-            className={field} style={fieldStyle} />
+            required aria-required="true" autoComplete="email" aria-describedby={described} className="field" />
         </div>
       </div>
-      <label htmlFor="cf-message" className={labelCls}>Message</label>
-      <textarea id="cf-message" name="message" value={form.message} onChange={update} rows={4}
+      <label htmlFor="cf-message" className={labelCls} style={{ color: 'var(--on-panel-2)' }}>Message</label>
+      <textarea id="cf-message" name="message" value={form.message} onChange={update} rows={3}
         placeholder="What would you like to build together?" required aria-required="true" aria-describedby={described}
-        className={`${field} resize-none mb-4`} style={fieldStyle} />
+        className="field resize-none mb-6" />
       {error && (
-        <p id="cf-error" role="alert" className="flex items-center gap-2 font-sans text-sm mb-4" style={{ color: '#F0B58A' }}>
-          <AlertCircle size={16} aria-hidden="true" /> {error}
-        </p>
+        <p id="cf-error" role="alert" className="font-sans text-sm mb-6" style={{ color: '#E9A87A' }}>{error}</p>
       )}
       <button type="submit" disabled={status === 'submitting'}
-        className="w-full sm:w-auto px-8 py-3.5 rounded-full font-sans font-bold text-xs tracking-widest uppercase inline-flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 hover:scale-[1.02] transition-transform"
+        className="group inline-flex items-center gap-3 px-7 py-3.5 eyebrow disabled:opacity-60 transition-transform"
         style={{ background: 'var(--accent)', color: '#1c130a' }}>
-        {status === 'submitting'
-          ? <><Loader2 size={16} className="animate-spin" /> Sending…</>
-          : <>Send message <Send size={16} /></>}
+        {status === 'submitting' ? 'Sending…' : 'Send message'}
+        <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
       </button>
     </form>
+  );
+};
+
+/* ============================================================
+   NAVIGATION — editorial masthead
+   ============================================================ */
+const NAV = [
+  ['Work', '#projects'],
+  ['Experience', '#experience'],
+  ['About', '#about'],
+  ['Skills', '#skills'],
+  ['Beyond', '#beyond'],
+  ['Contact', '#contact'],
+];
+
+const Nav = ({ theme, toggleTheme, onOpenMenu, scrolled, overDark }) => {
+  const ink = scrolled ? 'var(--ink)' : (overDark ? 'var(--on-panel)' : 'var(--ink)');
+  const faint = scrolled ? 'var(--ink-2)' : (overDark ? 'var(--on-panel-2)' : 'var(--ink-2)');
+  const navAccent = scrolled ? 'var(--accent-ink)' : (overDark ? 'var(--accent-on-panel)' : 'var(--accent-ink)');
+  const navStyle = scrolled
+    ? { background: 'var(--nav-bg)', borderBottom: '1px solid var(--line)', backdropFilter: 'blur(14px) saturate(140%)', WebkitBackdropFilter: 'blur(14px) saturate(140%)', '--nav-accent': navAccent }
+    : { background: 'transparent', '--nav-accent': navAccent };
+  return (
+    <nav className="fixed top-0 inset-x-0 z-[65] transition-all duration-300" style={navStyle}>
+      <Container className={`flex items-center justify-between ${scrolled ? 'py-3' : 'py-5'} transition-all duration-300`}>
+        <a href="#top" className="group flex items-center" aria-label="Kenzy Ibrahim — back to top">
+          <motion.img src={logoImg} alt="Kenzy Ibrahim"
+            whileHover={{ rotate: [0, -11, 8, -4, 0], scale: 1.09 }}
+            whileTap={{ scale: 0.9, rotate: 360 }}
+            transition={{ rotate: { duration: 0.6, ease: 'easeInOut' }, scale: { type: 'spring', stiffness: 300, damping: 14 } }}
+            style={{ transformOrigin: 'center' }}
+            className={`w-auto object-contain transition-[height] duration-300 ${scrolled ? 'h-8' : 'h-9 md:h-10'}`} />
+        </a>
+
+        <div className="flex items-center gap-7">
+          <ul className="hidden md:flex items-center gap-7">
+            {NAV.map(([label, href]) => (
+              <li key={href}>
+                <a href={href} className="nav-link u-link font-sans text-[13px] font-medium tracking-wide" style={{ color: faint }}>
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <button onClick={toggleTheme} aria-label="Toggle color theme"
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center transition-opacity hover:opacity-60"
+            style={{ color: ink }}>
+            {theme === 'light' ? <Moon size={17} strokeWidth={1.6} /> : <Sun size={17} strokeWidth={1.6} />}
+          </button>
+          <button onClick={onOpenMenu} aria-label="Open menu" aria-haspopup="dialog"
+            className="md:hidden min-w-[44px] min-h-[44px] inline-flex items-center justify-center" style={{ color: ink }}>
+            <Menu size={22} strokeWidth={1.6} />
+          </button>
+        </div>
+      </Container>
+    </nav>
+  );
+};
+
+const MobileMenu = ({ open, onClose }) => (
+  <AnimatePresence>
+    {open && (
+      <motion.div role="dialog" aria-modal="true" aria-label="Site navigation"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+        className="fixed inset-0 z-[80] flex flex-col" style={{ background: 'var(--paper)', '--nav-accent': 'var(--accent-ink)' }}>
+        <Container className="flex items-center justify-between py-5">
+          <img src={logoImg} alt="Kenzy Ibrahim" className="h-9 w-auto object-contain" />
+          <button onClick={onClose} aria-label="Close menu"
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center" style={{ color: 'var(--ink)' }}>
+            <X size={24} strokeWidth={1.4} />
+          </button>
+        </Container>
+        <Container className="flex-1 flex flex-col justify-center">
+          <ul>
+            {NAV.map(([label, href], i) => (
+              <motion.li key={href}
+                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 + i * 0.05 }}
+                className="border-t" style={{ borderColor: 'var(--line)' }}>
+                <a href={href} onClick={onClose}
+                  className="nav-link flex items-baseline gap-4 py-5 font-display text-4xl" style={{ color: 'var(--ink)' }}>
+                  <span className="font-mono text-xs" style={{ color: 'var(--accent-ink)' }}>{String(i + 1).padStart(2, '0')}</span>
+                  {label}
+                </a>
+              </motion.li>
+            ))}
+          </ul>
+        </Container>
+        <Container className="py-8">
+          <Socials showLabels color="var(--ink-2)" size={18} gapClass="gap-x-7 gap-y-3" />
+        </Container>
+      </motion.div>
+    )}
+  </AnimatePresence>
+);
+
+/* Skills as a toolbox — each type is a compartment that opens to reveal the tools inside */
+const Toolbox = () => {
+  const [open, setOpen] = useState(0);
+  return (
+    <div className="max-w-3xl">
+      {SKILLS.map((cat, i) => {
+        const isOpen = open === i;
+        return (
+          <div key={cat.group} className="border-t last:border-b" style={{ borderColor: 'var(--line-2)' }}>
+            <button type="button" onClick={() => setOpen(isOpen ? -1 : i)} aria-expanded={isOpen}
+              className="w-full flex items-center justify-between gap-4 py-6 md:py-7 text-left">
+              <span className="flex items-baseline gap-4">
+                <span className="font-mono text-xs" style={{ color: 'var(--accent-ink)' }}>{String(i + 1).padStart(2, '0')}</span>
+                <span className="font-display text-2xl md:text-3xl tracking-[-0.01em]" style={{ color: 'var(--ink)', fontWeight: 400 }}>{cat.group}</span>
+              </span>
+              <span className="flex items-center gap-5">
+                <span className="hidden sm:inline font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>{cat.items.length} tools</span>
+                <span className="relative w-3.5 h-3.5 shrink-0" aria-hidden="true">
+                  <span className="absolute top-1/2 left-0 w-3.5 h-px -translate-y-1/2" style={{ background: 'var(--ink)' }} />
+                  <motion.span className="absolute top-0 left-1/2 h-3.5 w-px -translate-x-1/2" style={{ background: 'var(--ink)' }}
+                    animate={{ opacity: isOpen ? 0 : 1 }} transition={{ duration: 0.25 }} />
+                </span>
+              </span>
+            </button>
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div key="tools" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }} className="overflow-hidden">
+                  <div className="flex flex-wrap gap-2.5 pb-7">
+                    {cat.items.map((name, j) => (
+                      <motion.span key={name} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.06 + j * 0.05, type: 'spring', stiffness: 260, damping: 18 }}
+                        className="px-4 py-2 font-sans text-sm" style={{ color: 'var(--ink)', border: '1px solid var(--line-2)' }}>
+                        {name}
+                      </motion.span>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+/* Experience as a vertical timeline the reader travels down — the accent rail fills as you scroll */
+const ExperienceTimeline = () => {
+  const reduce = useReducedMotion();
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 62%', 'end 72%'] });
+  return (
+    <ol ref={ref} className="relative">
+      <div aria-hidden="true" className="absolute left-[6px] top-2 bottom-8 w-px" style={{ background: 'var(--line-2)' }} />
+      {!reduce && (
+        <motion.div aria-hidden="true" className="absolute left-[6px] top-2 bottom-8 w-px origin-top"
+          style={{ background: 'var(--accent)', scaleY: scrollYProgress }} />
+      )}
+      {EXPERIENCE.map((exp, i) => (
+        <Reveal as="li" key={exp.company} delay={i * 0.05} className="relative pl-8 md:pl-12 pb-12 md:pb-16 last:pb-0">
+          <span aria-hidden="true" className="absolute left-0 top-1"
+            style={{ width: 14, height: 14, borderRadius: '9999px', background: exp.now ? 'var(--accent)' : 'transparent', border: '2px solid var(--accent)' }} />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span className="font-mono text-[12px] tracking-wide" style={{ color: 'var(--ink-2)' }}>{exp.date}</span>
+            {exp.now && (
+              <span className="inline-flex items-center gap-1.5 eyebrow" style={{ color: 'var(--accent-ink)' }}>
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent)' }} /> Current
+              </span>
+            )}
+          </div>
+          <h3 className="font-display text-2xl md:text-[1.9rem] tracking-[-0.01em] mt-2" style={{ color: 'var(--ink)', fontWeight: 400 }}>{exp.title}</h3>
+          <p className="font-sans font-semibold text-sm mt-1" style={{ color: 'var(--accent-ink)' }}>{exp.company}</p>
+          <ul className="mt-4 space-y-2.5 max-w-2xl">
+            {exp.points.map((p, j) => (
+              <li key={j} className="font-sans text-[15px] leading-relaxed flex gap-3" style={{ color: 'var(--ink-2)' }}>
+                <span aria-hidden="true" style={{ color: 'var(--ink-3)' }}>—</span><span>{p}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 font-mono text-[11px] tracking-wide" style={{ color: 'var(--ink-3)' }}>{exp.stack.join('  ·  ')}</p>
+        </Reveal>
+      ))}
+    </ol>
+  );
+};
+
+/* Apple-style scroll-driven canvas — the paper warmth shifts smoothly as you move
+   through the page, so sections read as distinct moments yet flow into one another. */
+const BG_TONES_LIGHT = ['#EFE7D6', '#E7DAC0', '#F3EDDE', '#E3D7BC', '#EFE7D6'];
+const BG_TONES_DARK = ['#191E15', '#20261A', '#12170F', '#222922', '#191E15'];
+const InteriorBackground = ({ progress, dark, reduce }) => {
+  const tones = dark ? BG_TONES_DARK : BG_TONES_LIGHT;
+  const bg = useTransform(progress, [0, 0.25, 0.5, 0.75, 1], tones);
+  return (
+    <motion.div aria-hidden="true" className="fixed inset-0"
+      style={{ backgroundColor: reduce ? tones[0] : bg, zIndex: -1 }} />
   );
 };
 
@@ -776,13 +1024,28 @@ const ContactForm = () => {
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, toggleTheme] = useTheme();
+  const reduce = useReducedMotion();
   const typed = useTyping([
     'Full-stack engineer.', 'ML builder.', 'UI/UX-obsessed.', 'Shipping products with taste.',
   ]);
-  const { scrollYProgress } = useScroll();
-  const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -80]);
+  const { scrollY, scrollYProgress } = useScroll();
+  const heroRef = useRef(null);
+  const { scrollYProgress: heroProg } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroY = useTransform(heroProg, [0, 1], [0, reduce ? 0 : 90]);
 
-  // Close the fullscreen menu with Escape (WCAG 2.1.2 — no keyboard trap)
+  const [scrolled, setScrolled] = useState(false);
+  const [overDark, setOverDark] = useState(true);
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      setOverDark(y < window.innerHeight - 80);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [scrollY]);
+
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = e => { if (e.key === 'Escape') setMenuOpen(false); };
@@ -790,353 +1053,336 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
 
-  // Give the nav a translucent backdrop once the page is scrolled
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const menuItems = [
-    ['About', '#about'], ['Experience', '#experience'], ['Projects', '#projects'],
-    ['Skills', '#skills'], ['Terminal', '#terminal'], ['Contact', '#contact'],
-  ];
-
   return (
-    <div className="grain relative min-h-screen overflow-x-hidden transition-colors duration-500"
-      style={{ background: 'var(--bg)', color: 'var(--ink)' }}>
+    <div className="grain relative min-h-screen overflow-x-hidden" style={{ color: 'var(--ink)' }}>
       <GlobalStyles />
-      <CustomCursor />
-      <Blobs />
+      <InteriorBackground key={theme} progress={scrollYProgress} dark={theme === 'dark'} reduce={reduce} />
 
-      {/* scroll progress bar */}
-      <motion.div className="fixed top-0 left-0 right-0 h-1 z-[70] origin-left"
-        style={{ scaleX: scrollYProgress, background: 'var(--accent)' }} />
+      <Nav theme={theme} toggleTheme={toggleTheme} onOpenMenu={() => setMenuOpen(true)}
+        scrolled={scrolled} overDark={overDark} />
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
-      {/* NAV */}
-      <nav className={`fixed top-0 left-0 right-0 z-[65] px-6 md:px-10 flex justify-between items-center transition-all duration-300 ${scrolled ? 'py-3 backdrop-blur-md shadow-lg' : 'py-5'}`}
-        style={scrolled ? { background: 'var(--nav-bg)' } : undefined}>
-        <a href="#top" aria-label="Back to top" className="flex items-center">
-          <img src={logoImg} alt="Kenzy Ibrahim" className="h-9 md:h-11 w-auto object-contain"
-            style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.35))' }} />
-        </a>
-        <div className="flex items-center gap-2">
-          <button onClick={toggleTheme} aria-label="Toggle theme"
-            className={`min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full border hover:scale-110 transition-transform ${scrolled ? 'text-[var(--on-panel)]' : 'mix-blend-difference text-white'}`}
-            style={{ borderColor: scrolled ? 'rgba(216,180,130,.5)' : 'rgba(255,255,255,.4)' }}>
-            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-          </button>
-          <button onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-haspopup="dialog" aria-expanded={menuOpen}
-            className={`min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full hover:scale-110 transition-transform ${scrolled ? 'text-[var(--on-panel)]' : 'mix-blend-difference text-white'}`}>
-            <Menu size={24} />
-          </button>
-        </div>
-      </nav>
+      {/* ── COVER / HERO ─────────────────────────────────── */}
+      <header id="top" ref={heroRef} className="relative min-h-screen flex flex-col overflow-hidden"
+        style={{ background: 'var(--panel)', color: 'var(--on-panel)' }}>
+        <div className="aurora" aria-hidden="true" />
 
-      {/* FULLSCREEN MENU */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div role="dialog" aria-modal="true" aria-label="Site navigation menu"
-            initial={{ clipPath: 'circle(0% at 100% 0%)' }}
-            animate={{ clipPath: 'circle(150% at 100% 0%)' }}
-            exit={{ clipPath: 'circle(0% at 100% 0%)' }} transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[80] flex flex-col p-6 md:p-10" style={{ background: 'var(--panel)' }}>
-            <div className="flex justify-end">
-              <button onClick={() => setMenuOpen(false)} aria-label="Close menu"
-                className="text-[var(--on-panel)] hover:rotate-90 transition-transform duration-300">
-                <X size={44} strokeWidth={1} />
-              </button>
-            </div>
-            <div className="flex-grow flex flex-col justify-center items-start pl-2 md:pl-20 gap-2 md:gap-4">
-              {menuItems.map(([label, href], i) => (
-                <motion.a key={label} href={href} onClick={() => setMenuOpen(false)}
-                  initial={{ x: -60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -60, opacity: 0 }}
-                  transition={{ delay: 0.15 + i * 0.07 }}
-                  className="font-serif text-4xl sm:text-5xl md:text-8xl text-stroke-light hover:pl-6 md:hover:pl-12 transition-all duration-300">
-                  {label}
-                </motion.a>
-              ))}
-            </div>
-            <div className="flex gap-6 pl-2 md:pl-20 font-mono text-xs tracking-widest text-[var(--on-panel)]/60">
-              <a href={LINKS.github} target="_blank" rel="noreferrer" className="hover:text-[var(--accent)]">GITHUB</a>
-              <a href={LINKS.linkedin} target="_blank" rel="noreferrer" className="hover:text-[var(--accent)]">LINKEDIN</a>
-              <a href={`mailto:${LINKS.email}`} className="hover:text-[var(--accent)]">EMAIL</a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <motion.div style={{ y: heroY }} className="relative z-10 flex-1 flex items-center">
+          <Container className="w-full pt-28 pb-16">
+            <Reveal mount>
+              <div className="flex items-center gap-4">
+                <span className="eyebrow" style={{ color: 'var(--accent-on-panel)' }}>Portfolio</span>
+                <span className="h-px w-16" style={{ background: 'var(--panel-line)' }} />
+                <span className="font-mono text-[11px]" style={{ color: 'var(--on-panel-2)' }}>Selected work &amp; experience</span>
+              </div>
+            </Reveal>
 
-      {/* HERO */}
-      <header id="top" className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 z-10"
-        style={{ background: 'var(--panel)' }}>
-        <motion.div style={{ y: heroY }} className="z-10 flex flex-col items-center">
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9 }}
-            className="w-44 md:w-60 mb-6">
-            <img src={logoImg} alt="Kenzy Ibrahim" className="w-full h-auto object-contain" />
-          </motion.div>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-            className="font-mono text-[var(--on-panel)]/70 text-xs md:text-sm tracking-[0.3em] uppercase mb-4">
-            Software Engineer · CS @ George Mason &apos;28
-          </motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}
-            className="font-serif text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-[var(--on-panel)] leading-[0.95] mb-5">
-            <span className="italic block md:inline md:mr-5">Kenzy</span>
-            <span className="block md:inline">Ibrahim</span>
-          </motion.h1>
-          <p className="font-serif italic text-[var(--on-panel)]/70 text-xl md:text-2xl mb-4">Engineering technology for life.</p>
-          <div className="h-8 mb-10">
-            <span className="font-mono text-base md:text-xl text-[var(--accent-ondark)]">{typed}</span>
-            <span className="blink text-[var(--accent-ondark)] font-mono text-base md:text-xl" aria-hidden="true">_</span>
-          </div>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <MagneticButton href={resumePdf} target="_blank" rel="noreferrer"
-              className="px-8 py-3.5 rounded-full font-sans font-bold text-xs tracking-widest uppercase inline-flex items-center gap-2 shadow-lg"
-              style={{ background: 'var(--accent)', color: '#1c130a' }}>
-              Résumé <ArrowUpRight size={16} />
-            </MagneticButton>
-            <MagneticButton href={LINKS.github} target="_blank" rel="noreferrer"
-              className="px-8 py-3.5 rounded-full font-sans font-bold text-xs tracking-widest uppercase inline-flex items-center gap-2 border"
-              style={{ borderColor: 'var(--on-panel)', color: 'var(--on-panel)' }}>
-              <Github size={16} /> GitHub
-            </MagneticButton>
-          </div>
+            <Reveal mount delay={0.05}>
+              <h1 className="font-display mt-8 md:mt-10 leading-[0.94] tracking-[-0.03em] text-[3.6rem] sm:text-[5.5rem] md:text-[8rem]"
+                style={{ fontWeight: 400 }}>
+                <span className="italic font-light">Kenzy</span> Ibrahim
+              </h1>
+            </Reveal>
+
+            <Reveal mount delay={0.12}>
+              <div className="mt-6 md:mt-8 flex items-center h-7">
+                <span className="font-mono text-base md:text-lg" style={{ color: 'var(--accent-on-panel)' }}>{typed}</span>
+                <span className="blink font-mono text-base md:text-lg" style={{ color: 'var(--accent-on-panel)' }} aria-hidden="true">_</span>
+              </div>
+              {/* reserved-height slot → the secret note fades in without shifting anything */}
+              <div className="mt-2 h-5">
+                <AnimatePresence>
+                  {theme === 'dark' && (
+                    <motion.p key="secret" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                      transition={{ duration: 0.6, ease: 'easeOut' }}
+                      className="font-mono text-[11px] md:text-xs tracking-wide" style={{ color: 'var(--on-panel-2)' }}>
+                      <span aria-hidden="true">☾ </span>psst — after-hours mode. this is where the best builds happen.
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
+            </Reveal>
+
+            <Reveal mount delay={0.18}>
+              <p className="font-display italic text-xl md:text-2xl mt-7" style={{ color: 'var(--on-panel)', fontWeight: 300 }}>
+                Engineering technology for life.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-4">
+                <a href={resumePdf} target="_blank" rel="noreferrer"
+                  className="group inline-flex items-center gap-3 px-7 py-3.5 eyebrow"
+                  style={{ background: 'var(--accent)', color: '#1c130a' }}>
+                  Résumé <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">↗</span>
+                </a>
+                <Socials color="var(--on-panel)" size={20} gapClass="gap-x-5" />
+                <LinkArrow href="#projects" external={false} mark="↓" style={{ color: 'var(--on-panel-2)' }}>View work</LinkArrow>
+              </div>
+            </Reveal>
+          </Container>
         </motion.div>
-        <motion.a href="#stats" aria-label="Scroll down"
-          animate={{ y: [0, 10, 0] }} transition={{ duration: 1.6, repeat: Infinity }}
-          className="absolute bottom-6 min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-[var(--on-panel)]/50 hover:text-[var(--accent)]">
-          <ArrowDown size={26} />
-        </motion.a>
+
+        {/* cover footer — an editorial index strip */}
+        <div className="relative z-10" style={{ borderTop: '1px solid var(--panel-line)' }}>
+          <Container className="py-5 flex flex-wrap items-center justify-between gap-x-8 gap-y-2">
+            {['Full-stack Engineer', 'Machine Learning', 'CS · George Mason ’28'].map((t, i) => (
+              <span key={t} className="font-mono text-[11px] tracking-wide" style={{ color: i === 0 ? 'var(--on-panel)' : 'var(--on-panel-2)' }}>{t}</span>
+            ))}
+            <motion.a href="#stats" aria-label="Scroll to content"
+              animate={reduce ? undefined : { y: [0, 5, 0] }} transition={{ duration: 1.8, repeat: Infinity }}
+              className="font-mono text-[11px] inline-flex items-center gap-2" style={{ color: 'var(--accent-on-panel)' }}>
+              Scroll <span aria-hidden="true">↓</span>
+            </motion.a>
+          </Container>
+        </div>
       </header>
 
-      {/* STATS */}
-      <section id="stats" className="relative z-10 py-16 md:py-20 px-6" style={{ background: 'var(--bg-alt)' }}>
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
-          {STATS.map((s, i) => (
-            <motion.div key={s.label} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center">
-              <div className="font-serif font-bold text-4xl md:text-6xl" style={{ color: 'var(--ink)' }}>
-                <CountUp value={s.value} decimals={s.decimals || 0} suffix={s.suffix || ''} />
-              </div>
-              <div className="font-mono text-[10px] md:text-xs tracking-widest uppercase mt-2" style={{ color: 'var(--accent-text)' }}>
-                {s.label}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ABOUT */}
-      <section id="about" className="relative z-10 py-16 md:py-24 px-6 md:px-20" style={{ background: 'var(--bg)' }}>
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-14 items-center">
-          <motion.div initial={{ opacity: 0, scale: 0.92 }} whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }} className="lg:col-span-2">
-            <div className="aspect-[3/4] rounded-t-[8rem] rounded-b-3xl overflow-hidden shadow-2xl group border-8"
-              style={{ borderColor: 'var(--card)' }}>
-              <img src={kenzyImg} alt="Kenzy Ibrahim" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-            </div>
-          </motion.div>
-          <div className="lg:col-span-3">
-            <Heading align="text-left" kicker="/ about">Full-stack, with an eye for design.</Heading>
-            <div className="space-y-5 font-sans text-lg leading-relaxed" style={{ color: 'var(--ink-70)' }}>
-              <p>I&apos;m a Computer Science major at George Mason University (Class of 2028, GPA 3.7, Dean&apos;s List). I build full-stack and ML products — from a YOLOv8 vision system that led a team of 8 at Verizon, to a survival-analysis model that forecasts wildfire evacuation risk.</p>
-              <p>My roots in digital content and design shape how I engineer: I care about the seam between elegant UI/UX and robust architecture, and I like shipping things people actually use.</p>
-              <p>Off the clock you&apos;ll find me playing volleyball, baking cookies, and reading — usually while thinking about what to build next.</p>
-            </div>
-            <div className="flex flex-wrap gap-4 mt-8">
-              {CERTS.map(c => (
-                <div key={c.name} className="flex items-center gap-2 px-4 py-2.5 rounded-full border font-mono text-xs"
-                  style={{ borderColor: 'var(--line)', color: 'var(--ink-70)' }}>
-                  <Award size={14} style={{ color: 'var(--accent-text)' }} />
-                  {c.name} · {c.org}
+      {/* ── STATS — editorial figures ledger ─────────────── */}
+      <section id="stats" className="relative">
+        <Container>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8"
+            style={{ borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+            {STATS.map((s, i) => (
+              <Reveal key={s.label} delay={i * 0.06} className="py-10 md:py-16">
+                <div className="flex gap-5">
+                  <span className="w-px self-stretch shrink-0" style={{ background: 'var(--line-2)' }} />
+                  <div>
+                    <div className="font-display text-[2.75rem] md:text-6xl leading-none tracking-[-0.02em]" style={{ color: 'var(--ink)', fontWeight: 400 }}>
+                      <CountUp value={s.value} decimals={s.decimals || 0} suffix={s.suffix || ''} />
+                    </div>
+                    <div className="eyebrow mt-3" style={{ color: 'var(--ink-2)' }}>{s.label}</div>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </Reveal>
+            ))}
           </div>
-        </div>
+        </Container>
       </section>
 
-      {/* EXPERIENCE */}
-      <section id="experience" className="relative z-10 py-16 md:py-24 px-6 md:px-20" style={{ background: 'var(--bg-alt)' }}>
-        <Heading kicker="/ experience">Where I&apos;ve worked</Heading>
-        <div className="max-w-4xl mx-auto">
-          <ol className="relative border-l-2 ml-2" style={{ borderColor: 'var(--line)' }}>
-            {EXPERIENCE.map((exp, i) => (
-              <motion.li key={exp.company} initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.12 }} className="mb-14 ml-8">
-                <motion.span whileInView={{ scale: [0, 1.3, 1] }} viewport={{ once: true }}
-                  className="absolute flex w-4 h-4 rounded-full -left-[9px] ring-4"
-                  style={{ background: 'var(--accent)', ['--tw-ring-color']: 'var(--bg-alt)' }} />
-                <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
-                  <h3 className="text-2xl md:text-3xl font-serif font-bold" style={{ color: 'var(--ink)' }}>{exp.title}</h3>
-                  <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--accent-text)' }}>{exp.date}</span>
+      {/* ── ABOUT ────────────────────────────────────────── */}
+      <section id="about" className="relative py-20 md:py-32">
+        <GhostType color="var(--ink)" opacity={0.05} rotate={-3}
+          className="hidden md:block italic text-[8rem] lg:text-[12rem] -left-4 bottom-6">Hello</GhostType>
+        <Container className="relative z-10">
+          <SectionHead index="01" label="About" />
+          <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-12 lg:gap-20 items-start">
+            <Reveal>
+              <figure>
+                <div className="overflow-hidden rounded-t-[7rem] rounded-b-[1.75rem]"
+                  style={{ border: '1px solid var(--line-2)', boxShadow: '0 24px 60px -32px rgba(0,0,0,.45)' }}>
+                  <img src={kenzyImg} alt="Kenzy Ibrahim" className="w-full aspect-[4/5] object-cover" />
                 </div>
-                <p className="font-sans font-bold tracking-wide mb-3" style={{ color: 'var(--ink-70)' }}>{exp.company}</p>
-                <ul className="space-y-2 mb-4">
-                  {exp.points.map((p, j) => (
-                    <li key={j} className="font-sans leading-relaxed flex gap-3" style={{ color: 'var(--ink-70)' }}>
-                      <span style={{ color: 'var(--accent-text)' }} aria-hidden="true">▹</span><span>{p}</span>
+                <figcaption className="font-mono text-[11px] mt-4 flex items-center justify-between px-2" style={{ color: 'var(--ink-3)' }}>
+                  <span>Kenzy Ibrahim</span><span>George Mason University</span>
+                </figcaption>
+              </figure>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <p className="font-display text-2xl md:text-[2rem] leading-[1.3] tracking-[-0.01em]" style={{ color: 'var(--ink)', fontWeight: 400 }}>
+                A Computer Science major at George Mason, building full-stack and ML products people actually use.
+              </p>
+              <div className="mt-7 space-y-5 font-sans text-[15px] md:text-base leading-relaxed max-w-xl" style={{ color: 'var(--ink-2)' }}>
+                <p>My roots in digital content and design shape how I engineer: I care about the seam between elegant
+                  UI/UX and robust architecture — from a YOLOv8 vision system that led a team of eight at Verizon,
+                  to a survival-analysis model forecasting wildfire evacuation risk.</p>
+                <p>Off the clock you’ll find me playing volleyball, baking cookies, and reading — usually while thinking
+                  about what to build next.</p>
+              </div>
+
+              <div className="mt-10">
+                <div className="eyebrow mb-1" style={{ color: 'var(--ink-3)' }}>Education &amp; Certifications</div>
+                <ul>
+                  <li className="flex items-baseline justify-between gap-4 py-4 border-t" style={{ borderColor: 'var(--line)' }}>
+                    <div>
+                      <div className="font-display text-lg" style={{ color: 'var(--ink)' }}>B.S. Computer Science</div>
+                      <div className="font-sans text-sm" style={{ color: 'var(--ink-2)' }}>George Mason University · GPA 3.7, Dean’s List</div>
+                    </div>
+                    <span className="font-mono text-[11px] whitespace-nowrap" style={{ color: 'var(--ink-3)' }}>May 2028</span>
+                  </li>
+                  {CERTS.map(c => (
+                    <li key={c.name} className="flex items-baseline justify-between gap-4 py-4 border-t" style={{ borderColor: 'var(--line)' }}>
+                      <div>
+                        <div className="font-display text-lg" style={{ color: 'var(--ink)' }}>{c.name}</div>
+                        <div className="font-sans text-sm" style={{ color: 'var(--ink-2)' }}>{c.org}</div>
+                      </div>
+                      <span className="font-mono text-[11px] whitespace-nowrap" style={{ color: 'var(--ink-3)' }}>{c.date}</span>
                     </li>
                   ))}
                 </ul>
-                <div className="flex flex-wrap gap-2">
-                  {exp.stack.map(s => (
-                    <span key={s} className="px-3 py-1 rounded-full font-mono text-[10px] tracking-wider uppercase border"
-                      style={{ borderColor: 'var(--line)', color: 'var(--ink-70)' }}>{s}</span>
-                  ))}
-                </div>
-              </motion.li>
-            ))}
-          </ol>
-        </div>
+              </div>
+            </Reveal>
+          </div>
+        </Container>
       </section>
 
-      {/* PROJECTS */}
-      <section id="projects" className="relative z-10 py-16 md:py-24 px-6 md:px-20" style={{ background: 'var(--panel)' }}>
-        <Heading light kicker="/ projects">Things I&apos;ve built</Heading>
-        <div className="max-w-6xl mx-auto flex flex-wrap justify-center gap-6">
-          {PROJECTS.map((p, i) => (
-            <motion.article key={p.title} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-              whileHover={{ y: -8 }} data-cursor
-              className="group w-full sm:w-[340px] rounded-3xl overflow-hidden flex flex-col shadow-xl border"
-              style={{ background: 'var(--card)', borderColor: 'var(--line)' }}>
-              <div className="relative">
-                <ProjectPreview kind={p.preview} />
-                {p.live && (
-                  <a href={p.live} target="_blank" rel="noreferrer"
-                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ background: 'rgba(14,19,15,.55)' }} aria-label={`Open ${p.title} live`}>
-                    <span className="px-5 py-2.5 rounded-full font-sans text-xs font-bold tracking-widest uppercase inline-flex items-center gap-2"
-                      style={{ background: 'var(--accent)', color: '#1c130a' }}>Live demo <ExternalLink size={14} /></span>
-                  </a>
-                )}
-              </div>
-              <div className="p-7 flex flex-col flex-grow">
-                <div className="flex items-start justify-between gap-3 mb-1">
-                  <h3 className="font-serif font-bold text-2xl" style={{ color: 'var(--ink)' }}>{p.title}</h3>
-                  <div className="flex gap-2 shrink-0 pt-1">
-                    {p.github && (
-                      <a href={p.github} target="_blank" rel="noreferrer" aria-label="GitHub repo"
-                        className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full border hover:scale-110 transition-transform"
-                        style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><Github size={18} /></a>
-                    )}
-                    {p.live && (
-                      <a href={p.live} target="_blank" rel="noreferrer" aria-label="Live demo"
-                        className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full border hover:scale-110 transition-transform"
-                        style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}><ExternalLink size={18} /></a>
-                    )}
-                    {p.proprietary && (
-                      <span className="px-3 py-1.5 rounded-full font-mono text-[9px] tracking-wider uppercase self-center"
-                        style={{ background: 'var(--bg)', color: 'var(--ink-70)' }}>Proprietary</span>
-                    )}
-                  </div>
-                </div>
-                <p className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: 'var(--accent-text)' }}>{p.role}</p>
-                <p className="font-sans text-sm leading-relaxed mb-5 flex-grow" style={{ color: 'var(--ink-70)' }}>{p.desc}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {p.metrics.map(m => (
-                    <span key={m} className="px-3 py-1 rounded-full font-sans text-xs font-bold"
-                      style={{ background: 'var(--accent)', color: '#1c130a' }}>{m}</span>
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-2 pt-4 border-t" style={{ borderColor: 'var(--line)' }}>
-                  {p.tags.map(t => (
-                    <span key={t} className="font-mono text-[10px] tracking-wider uppercase" style={{ color: 'var(--ink-70)' }}>#{t}</span>
-                  ))}
-                </div>
-              </div>
-            </motion.article>
-          ))}
-        </div>
+      {/* ── EXPERIENCE ───────────────────────────────────── */}
+      <section id="experience" className="relative py-20 md:py-32">
+        <Container className="relative z-10">
+          <SectionHead index="02" label="Experience" title="Where I’ve worked" />
+          <ExperienceTimeline />
+        </Container>
       </section>
 
-      {/* SKILLS */}
-      <section id="skills" className="relative z-10 py-16 md:py-24 px-6 md:px-20" style={{ background: 'var(--bg)' }}>
-        <Heading kicker="/ skills">The toolkit</Heading>
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
-          {SKILLS.map((cat, ci) => (
-            <motion.div key={cat.group} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ delay: ci * 0.1 }}
-              className="rounded-3xl p-7 border" style={{ background: 'var(--bg-alt)', borderColor: 'var(--line)' }}>
-              <div className="flex items-center gap-3 mb-6">
-                {React.createElement(cat.icon, { size: 20, style: { color: 'var(--accent-text)' } })}
-                <h3 className="font-sans font-bold tracking-widest uppercase text-sm" style={{ color: 'var(--ink)' }}>{cat.group}</h3>
-              </div>
-              <div className="space-y-4">
-                {cat.items.map((s, si) => (
-                  <div key={s.name}>
-                    <div className="flex justify-between font-mono text-xs mb-1.5" style={{ color: 'var(--ink-70)' }}>
-                      <span>{s.name}</span>
+      {/* ── WORK ─────────────────────────────────────────── */}
+      <section id="projects" className="relative py-20 md:py-32">
+        <GhostType color="var(--ink)" opacity={0.05} rotate={-4}
+          className="hidden md:block italic text-[8rem] lg:text-[12rem] -right-5 top-16">Craft</GhostType>
+        <Container className="relative z-10">
+          <SectionHead index="03" label="Selected Work" title="Things I’ve built" />
+          <div style={{ borderBottom: '1px solid var(--line)' }}>
+            {PROJECTS.map((p, i) => {
+              const flip = i % 2 === 1;
+              return (
+                <Reveal as="article" key={p.title}
+                  className="grid md:grid-cols-2 gap-8 md:gap-16 items-center py-12 md:py-16"
+                  style={{ borderTop: '1px solid var(--line)' }}>
+                  <ProjectMedia p={p} flip={flip} />
+                  <div className={flip ? 'md:order-1' : ''}>
+                    <div className="flex items-baseline gap-4">
+                      <span className="font-display text-4xl md:text-5xl" style={{ color: 'var(--ink-3)', fontWeight: 300 }}>{String(i + 1).padStart(2, '0')}</span>
+                      <span className="eyebrow" style={{ color: 'var(--accent-ink)' }}>{p.role}</span>
                     </div>
-                    <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--line)' }}
-                      role="img" aria-label={`${s.name} proficiency: ${s.level} percent`}>
-                      <motion.div initial={{ width: 0 }} whileInView={{ width: `${s.level}%` }}
-                        viewport={{ once: true }} transition={{ duration: 1, delay: 0.2 + si * 0.08, ease: 'easeOut' }}
-                        className="h-full rounded-full" style={{ background: 'var(--accent-text)' }} />
+                    <h3 className="font-display text-3xl md:text-[2.5rem] leading-tight tracking-[-0.02em] mt-3" style={{ color: 'var(--ink)', fontWeight: 400 }}>{p.title}</h3>
+                    <p className="font-sans text-[15px] leading-relaxed mt-4 max-w-lg" style={{ color: 'var(--ink-2)' }}>{p.desc}</p>
+
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-6">
+                      {p.metrics.map((m, mi) => (
+                        <React.Fragment key={m}>
+                          {mi > 0 && <span aria-hidden="true" style={{ color: 'var(--line-2)' }}>·</span>}
+                          <span className="font-sans text-sm font-semibold" style={{ color: 'var(--ink)' }}>{m}</span>
+                        </React.Fragment>
+                      ))}
+                    </div>
+
+                    <p className="mt-4 font-mono text-[11px] tracking-wide" style={{ color: 'var(--ink-3)' }}>
+                      {p.tags.join('  ·  ')}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6">
+                      {p.live && <LinkArrow href={p.live} style={{ color: 'var(--ink)' }}>Live demo</LinkArrow>}
+                      {p.github && <LinkArrow href={p.github} style={{ color: 'var(--ink)' }}>Source</LinkArrow>}
+                      {p.proprietary && (
+                        <span className="eyebrow" style={{ color: 'var(--ink-3)' }}>Proprietary · Verizon</span>
+                      )}
                     </div>
                   </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── MARQUEE — professional × personal ────────────── */}
+      <Marquee />
+
+      {/* ── SKILLS ───────────────────────────────────────── */}
+      <section id="skills" className="relative py-20 md:py-32">
+        <Container className="relative z-10">
+          <SectionHead index="04" label="Capabilities" title="The toolbox" />
+          <p className="font-sans text-[15px] mb-8 max-w-md" style={{ color: 'var(--ink-2)' }}>
+            Open a drawer to see what’s inside.
+          </p>
+          <Reveal><Toolbox /></Reveal>
+        </Container>
+      </section>
+
+      {/* ── TERMINAL ─────────────────────────────────────── */}
+      <section id="terminal" className="relative py-20 md:py-32">
+        <Container className="relative z-10">
+          <SectionHead index="05" label="Interactive" title="Poke around" />
+          <div className="grid md:grid-cols-[1fr_auto] gap-10 md:gap-16 items-center">
+            <Terminal />
+            <div className="max-w-xs">
+              <p className="font-sans text-[15px] leading-relaxed" style={{ color: 'var(--ink-2)' }}>
+                Prefer a command line? This one is real — type a command and it responds.
+              </p>
+              <p className="mt-4 font-mono text-[12px]" style={{ color: 'var(--ink-3)' }}>
+                try: whoami · projects · skills · contact
+              </p>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ── BEYOND THE WORK — the person behind the commits ─ */}
+      <section id="beyond" className="relative py-20 md:py-32">
+        <Container className="relative z-10">
+          <SectionHead index="06" label="Beyond the work" title="Off the clock" />
+          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-20 items-start">
+            <Reveal>
+              <p className="font-display text-2xl md:text-[2rem] leading-[1.3] tracking-[-0.01em]" style={{ color: 'var(--ink)', fontWeight: 400 }}>
+                There&apos;s a person behind the commits.
+              </p>
+              <div className="mt-7 space-y-5 font-sans text-[15px] md:text-base leading-relaxed max-w-xl" style={{ color: 'var(--ink-2)' }}>
+                <p>My roots are in digital content and design, which is why I care as much about how something
+                  feels as whether it works — that instinct follows me from the first wireframe to the last commit.</p>
+                <p>Away from the keyboard you&apos;ll find me on the volleyball court, over-engineering a batch of
+                  cookies, or lost in a good book — usually while quietly plotting the next thing to build.</p>
+              </div>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <div className="eyebrow mb-1" style={{ color: 'var(--ink-3)' }}>A few things I love</div>
+              <ul>
+                {[
+                  ['Volleyball', 'weekends'],
+                  ['Baking', 'cookies'],
+                  ['Reading', 'fiction'],
+                  ['Design', 'attention to detail'],
+                ].map(([k, v]) => (
+                  <li key={k} className="row-nudge flex items-baseline justify-between gap-4 py-4 border-t" style={{ borderColor: 'var(--line)' }}>
+                    <span className="font-display text-lg" style={{ color: 'var(--ink)' }}>{k}</span>
+                    <span className="font-mono text-[11px] whitespace-nowrap" style={{ color: 'var(--ink-3)' }}>{v}</span>
+                  </li>
                 ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </ul>
+            </Reveal>
+          </div>
+        </Container>
       </section>
 
-      {/* TERMINAL */}
-      <section id="terminal" className="relative z-10 py-16 md:py-24 px-6" style={{ background: 'var(--bg-alt)' }}>
-        <Heading kicker="/ interactive">
-          <span className="inline-flex items-center gap-3"><TerminalIcon size={38} style={{ color: 'var(--accent-text)' }} aria-hidden="true" /> Poke around</span>
-        </Heading>
-        <Terminal />
-        <p className="text-center font-mono text-xs mt-6" style={{ color: 'var(--ink-70)' }}>
-          try: whoami · projects · skills · contact
-        </p>
-      </section>
+      {/* ── CONTACT / BACK COVER ─────────────────────────── */}
+      <footer id="contact" className="relative overflow-hidden pt-20 md:pt-32 pb-10" style={{ background: 'var(--panel)', color: 'var(--on-panel)' }}>
+        <div className="aurora" aria-hidden="true" style={{ opacity: 0.7 }} />
+        <GhostType color="var(--on-panel)" opacity={0.06} rotate={-3}
+          className="hidden md:block italic text-[9rem] lg:text-[15rem] -left-3 bottom-6">Kenzy</GhostType>
+        <Container className="relative z-10">
+          <SectionHead index="07" label="Contact" light />
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-14 lg:gap-20">
+            <div>
+              <Reveal>
+                <h2 className="font-display leading-[0.95] tracking-[-0.02em] text-[3rem] md:text-[4.5rem]" style={{ color: 'var(--on-panel)', fontWeight: 400 }}>
+                  Let’s build <span className="italic font-light">something.</span>
+                </h2>
+                <p className="font-sans mt-5 max-w-md" style={{ color: 'var(--on-panel-2)' }}>
+                  Open to software engineering internships. The inbox is always on.
+                </p>
+              </Reveal>
 
-      {/* CONTACT */}
-      <footer id="contact" className="relative z-10 pt-16 md:pt-24 pb-12 px-6 flex flex-col items-center text-center overflow-hidden"
-        style={{ background: 'var(--panel)' }}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] md:w-[60rem] opacity-[0.04] pointer-events-none">
-          <img src={logoImg} alt="" className="w-full h-auto object-contain" />
-        </div>
-        <div className="relative z-10 flex flex-col items-center w-full">
-          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-            className="font-mono text-xs tracking-[0.3em] uppercase mb-4" style={{ color: 'var(--accent-ondark)' }}>/ contact</motion.p>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-8xl text-[var(--on-panel)] mb-4">Let&apos;s build something.</h2>
-          <p className="font-sans text-[var(--on-panel)]/60 max-w-md mb-10">Open to software engineering internships. The inbox is always on.</p>
+              <Reveal delay={0.08}>
+                <div className="mt-10 space-y-6">
+                  <a href={`mailto:${LINKS.email}`} className="u-link inline-flex items-center gap-3 font-display text-2xl md:text-3xl" style={{ color: 'var(--on-panel)' }}>
+                    <Mail size={22} strokeWidth={1.6} aria-hidden="true" className="opacity-70" />
+                    {LINKS.email}
+                  </a>
+                  <Socials showLabels items={SOCIALS.filter(s => s.label !== 'Email')} color="var(--on-panel-2)" size={18} gapClass="gap-x-8 gap-y-3" />
+                </div>
+              </Reveal>
+            </div>
 
-          <div className="w-full mb-10"><ContactForm /></div>
-
-          <div className="flex items-center gap-4 w-full max-w-xl mx-auto mb-8">
-            <span className="flex-1 h-px" style={{ background: 'rgba(255,255,255,.14)' }} />
-            <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--on-panel)]/70">or find me at</span>
-            <span className="flex-1 h-px" style={{ background: 'rgba(255,255,255,.14)' }} />
+            <Reveal delay={0.12} className="lg:pt-4">
+              <ContactForm />
+            </Reveal>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-16">
-            <MagneticButton href={`mailto:${LINKS.email}`}
-              className="px-8 py-4 rounded-full inline-flex items-center gap-3 font-sans text-sm shadow-lg"
-              style={{ background: 'var(--accent)', color: '#1c130a' }}>
-              <Mail size={18} /> {LINKS.email}
-            </MagneticButton>
-            <MagneticButton href={LINKS.linkedin} target="_blank" rel="noreferrer"
-              className="px-8 py-4 rounded-full border inline-flex items-center gap-3 font-sans text-sm text-[var(--on-panel)]"
-              style={{ borderColor: 'var(--accent)' }}>
-              <Linkedin size={18} /> /kenzyibrahim
-            </MagneticButton>
-            <MagneticButton href={LINKS.github} target="_blank" rel="noreferrer"
-              className="px-8 py-4 rounded-full border inline-flex items-center gap-3 font-sans text-sm text-[var(--on-panel)]"
-              style={{ borderColor: 'var(--accent)' }}>
-              <Github size={18} /> kenzyi2024
-            </MagneticButton>
+          <div className="mt-20 md:mt-28 pt-7 flex flex-wrap items-center justify-between gap-4"
+            style={{ borderTop: '1px solid var(--panel-line)' }}>
+            <span className="font-mono text-[11px]" style={{ color: 'var(--on-panel-2)' }}>© 2026 Kenzy Ibrahim</span>
+            <Socials color="var(--on-panel-2)" size={16} gapClass="gap-x-5" />
+            <a href="#top" className="u-link font-mono text-[11px] inline-flex items-center gap-2" style={{ color: 'var(--accent-on-panel)' }}>
+              Back to top <span aria-hidden="true">↑</span>
+            </a>
           </div>
-          <div className="w-full max-w-2xl flex justify-center items-center text-[var(--on-panel)]/70 text-xs font-mono tracking-widest uppercase border-t pt-8"
-            style={{ borderColor: 'rgba(255,255,255,.1)' }}>
-            <span>© 2026 Kenzy Ibrahim</span>
-          </div>
-        </div>
+        </Container>
       </footer>
     </div>
   );
